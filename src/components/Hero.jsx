@@ -8,7 +8,7 @@ const Hero = () => {
         <p> </p>
         <h4 className='mellissa text-[160px]'>of the</h4>
       </div>
-      <h3 className='text-red-600 grinds text-[100px] leading-none'>UNDERGROUND</h3>
+      <h3 className='text-red-700 grinds text-[100px] leading-none'>UNDERGROUND</h3>
     </section>
 )
 }
