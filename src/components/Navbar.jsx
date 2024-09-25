@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { URlogo } from '../assets/images';
 import { Link } from 'react-router-dom';
-import { Link as ScrollLink } from 'react-scroll';
 
 const Navbar = () => {
   const [scrolled, setScrolled] = useState(false);
@@ -33,18 +32,18 @@ const Navbar = () => {
         <div className="w-full flex justify-between h-auto px-20 sm:px-4 py-2 xs:hidden">
           <ul className="flex w-1/3 items-center justify-center gap-8">
             <li>
-              <ScrollLink
+              <Link
                 className="nav-link bebas text-xl md:text-lg sm:text-base cursor-pointer"
-                to="bio"
+                to="/"
                 smooth={true}
                 duration={500}
               >
-                About
-              </ScrollLink>
+                HOME
+              </Link>
             </li>
             <li>
-              <Link className="nav-link bebas text-xl md:text-lg sm:text-base" to="/gallery">
-                Gallery
+              <Link className="nav-link bebas text-xl md:text-lg sm:text-base" to="/about">
+                ABOUT
               </Link>
             </li>
           </ul>
@@ -53,19 +52,19 @@ const Navbar = () => {
           </div>
           <ul className="flex w-1/3 items-center justify-center gap-8">
             <li>
-              <Link className="nav-link bebas text-xl md:text-lg sm:text-base" to="/discography">
-                Discography
+              <Link className="nav-link bebas text-xl md:text-lg sm:text-base" to="/gallery">
+                GALLERY
               </Link>
             </li>
             <li>
-              <ScrollLink
+              <Link
                 className="nav-link bebas text-xl md:text-lg sm:text-base cursor-pointer"
-                to="contact"
+                to="/discography"
                 smooth={true}
                 duration={500}
               >
-                Contact
-              </ScrollLink>
+                DISCOGRAPHY
+              </Link>
             </li>
           </ul>
         </div>
