@@ -7,9 +7,9 @@ import { AboutPage, Home, Gallery, Discography } from './pages'
 function App() {
 
   return (
-    <Router>
+    <Router className='w-full'>
       <Navbar />
-        <main className='w-full flex flex-col'>
+        <main className='w-screen flex flex-col'>
           <Routes>
             <Route path="/" element={<Home />} />
             <Route path="/about" element={<AboutPage />} />

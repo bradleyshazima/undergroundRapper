@@ -9,7 +9,7 @@ const Home = () => {
     <Bio />
     <Stream />
     <Contact />
-    <hr className='w-4/5 bg-white mx-auto' />
+    <hr className='w-4/5 bg-white mx-auto xs:w-full' />
     </>
   )
 }
