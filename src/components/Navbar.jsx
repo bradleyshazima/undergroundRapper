@@ -1,6 +1,7 @@
-import React, { useState, useEffect } from 'react'; // Ensure hooks are imported
+import React, { useState, useEffect } from 'react';
 import { URlogo } from '../assets/images';
 import { Link } from 'react-router-dom';
+import { Link as ScrollLink } from 'react-scroll';
 
 const Navbar = () => {
   const [scrolled, setScrolled] = useState(false);
@@ -24,12 +25,16 @@ const Navbar = () => {
     >
       <ul className="flex w-1/3 items-center justify-center gap-8">
         <li>
-          <Link className="bebas text-xl text-white" to="#">
+          <ScrollLink
+            className="nav-link bebas text-xl cursor-pointer"
+            to="bio"
+            smooth={true} 
+            duration={500}>
             About
-          </Link>
+          </ScrollLink>
         </li>
         <li>
-          <Link className="bebas text-xl text-white" to="#">
+          <Link className="nav-link bebas text-xl" to="/gallery">
             Gallery
           </Link>
         </li>
@@ -39,14 +44,18 @@ const Navbar = () => {
       </div>
       <ul className="flex w-1/3 items-center justify-center gap-8">
         <li>
-          <Link className="bebas text-xl text-white" to="#">
+          <Link className="nav-link bebas text-xl" to="/discography">
             Discography
           </Link>
         </li>
         <li>
-          <Link className="bebas text-xl text-white" to="#">
+          <ScrollLink
+            className="nav-link bebas text-xl cursor-pointer"
+            to="contact"
+            smooth={true} 
+            duration={500}>
             Contact
-          </Link>
+          </ScrollLink>
         </li>
       </ul>
     </nav>

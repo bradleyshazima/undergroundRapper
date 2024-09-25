@@ -7,7 +7,7 @@ const NewRelease = () => {
     <section id="newRelease" className='w-full flex justify-center py-20 px-40 bg-gray-100 gap-8'>
           <div className='w-1/2'>
             <p className='font-semibold'>Available now</p>
-            <h3 className='text-3xl font-bold'>NEW EP OUT NOW</h3>
+            <h3 className='text-5xl font-bold bebas'>NEW EP OUT NOW</h3>
 
             <iframe
               style={{ borderRadius: '12px' }}

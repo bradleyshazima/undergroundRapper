@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import './App.css'
-import { Contact, Footer, Hero, Navbar, NewRelease, Stream } from './components'
+import { Footer, Navbar } from './components'
 import { AboutPage, Home, Gallery, Discography } from './pages'
 
 function App() {
