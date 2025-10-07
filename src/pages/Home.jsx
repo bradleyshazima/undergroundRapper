@@ -4,12 +4,10 @@ import { Contact, Hero, NewRelease, Stream, Bio } from '../components'
 const Home = () => {
   return (
     <>
-    <Hero />
-    <NewRelease />
-    <Bio />
-    <Stream />
-    <Contact />
-    <hr className='w-4/5 bg-white mx-auto xs:w-full' />
+    <section className='w-full h-screen'>
+      <Hero />
+      
+    </section>
     </>
   )
 }

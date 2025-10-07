@@ -24,7 +24,7 @@ const Navbar = () => {
     <>
       <nav
         id="navbar"
-        className={`w-full flex h-auto fixed z-[999] top-0 left-0 transition-all duration-300 bg-transparent ${
+        className={`w-full flex h-auto fixed z-[999] top-0 left-0 transition-all duration-300 bg-[#131313] ${
           scrolled ? 'scrolled' : ''
         }`}
       >
@@ -42,8 +42,13 @@ const Navbar = () => {
               </Link>
             </li>
             <li>
-              <Link className="nav-link bebas text-xl md:text-lg sm:text-base" to="/about">
-                ABOUT
+              <Link className="nav-link bebas text-xl md:text-lg sm:text-base" to="/discography">
+                MUSIC
+              </Link>
+            </li>
+            <li>
+              <Link className="nav-link bebas text-xl md:text-lg sm:text-base" to="/videos">
+                VISUALS
               </Link>
             </li>
           </ul>
@@ -59,11 +64,21 @@ const Navbar = () => {
             <li>
               <Link
                 className="nav-link bebas text-xl md:text-lg sm:text-base cursor-pointer"
-                to="/discography"
+                to="/store"
                 smooth={true}
                 duration={500}
               >
-                DISCOGRAPHY
+                STORE
+              </Link>
+            </li>
+            <li>
+              <Link
+                className="nav-link bebas text-xl md:text-lg sm:text-base cursor-pointer"
+                to="/shows&tours"
+                smooth={true}
+                duration={500}
+              >
+                SHOWS & TOURS
               </Link>
             </li>
           </ul>
@@ -103,8 +118,13 @@ const Navbar = () => {
             </Link>
           </li>
           <li>
-            <Link className="text-white text-lg bebas nav-link" to="/about" onClick={toggleMenu}>
-              ABOUT
+            <Link className="text-white text-lg bebas nav-link" to="/discography" onClick={toggleMenu}>
+              MUSIC
+            </Link>
+          </li>
+          <li>
+            <Link className="text-white text-lg bebas nav-link" to="/video" onClick={toggleMenu}>
+              VIDEO
             </Link>
           </li>
           <li>
@@ -113,14 +133,19 @@ const Navbar = () => {
             </Link>
           </li>
           <li>
+            <Link className="text-white text-lg bebas nav-link" to="/store" onClick={toggleMenu}>
+              STORE
+            </Link>
+          </li>
+          <li>
             <Link
               className="text-white text-lg cursor-pointer bebas nav-link"
-              to="/discography"
+              to="/shows&tours"
               smooth={true}
               duration={500}
               onClick={toggleMenu}
             >
-              DISCOGRAPHY
+              SHOWS & TOURS
             </Link>
           </li>
         </ul>
