@@ -1,11 +1,14 @@
 import React from "react";
 import videos from '../constants'
+import { Navbar } from "../components";
 
 const video = []
 
 
 const Video = () => {
   return (
+    <>
+    <Navbar />
     <section className="pt-[100px] px-10 sm:px-4 pb-10 bg-[#131313] text-white min-h-screen">
       {/* Section Title */}
       <div className="w-full h-[280px] px-10 flex items-center justify-center">
@@ -34,6 +37,7 @@ const Video = () => {
         ))}
       </div>
     </section>
+  </>
   );
 };
 

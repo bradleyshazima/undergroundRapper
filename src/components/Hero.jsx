@@ -4,7 +4,6 @@ import { navLinks } from "../constants";
 
 const Hero = () => {
   return (
-    <>
       <section
         id="hero"
         className={`w-full h-screen flex items-center xl:px-28 lg:px-24 md:px-16 sm:px-16 xs:px-4 relative`}
@@ -45,7 +44,6 @@ const Hero = () => {
           </ul>
         </div>
       </section>
-    </>
   );
 };
 

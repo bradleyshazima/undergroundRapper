@@ -61,16 +61,7 @@ const Navbar = () => {
                 GALLERY
               </Link>
             </li>
-            <li>
-              <Link
-                className="nav-link bebas text-xl md:text-lg sm:text-base cursor-pointer"
-                to="/store"
-                smooth={true}
-                duration={500}
-              >
-                STORE
-              </Link>
-            </li>
+
             <li>
               <Link
                 className="nav-link bebas text-xl md:text-lg sm:text-base cursor-pointer"
@@ -130,11 +121,6 @@ const Navbar = () => {
           <li>
             <Link className="text-white text-lg bebas nav-link" to="/gallery" onClick={toggleMenu}>
               GALLERY
-            </Link>
-          </li>
-          <li>
-            <Link className="text-white text-lg bebas nav-link" to="/store" onClick={toggleMenu}>
-              STORE
             </Link>
           </li>
           <li>

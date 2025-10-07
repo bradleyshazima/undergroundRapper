@@ -1,6 +1,7 @@
 import React, { useState, useMemo } from "react";
 import songsData from "../data";
 import { Link } from "react-router-dom";
+import { Navbar } from "../components";
 
 const Discography = () => {
   const [search, setSearch] = useState("");
@@ -16,6 +17,8 @@ const Discography = () => {
   }, [search]);
 
   return (
+    <>
+    <Navbar />
     <section className="pt-[100px] px-10 sm:px-4 pb-10 bg-[#131313] text-white min-h-screen">
       <div className="w-full h-[280px] px-10 flex items-center justify-center">
         <h1 className="text-[96px] italic text-transparent font-[900] bebas font-outline-2">MUSIC</h1>
@@ -52,6 +55,7 @@ const Discography = () => {
         ))}
       </div>
     </section>
+</>
   );
 };
 

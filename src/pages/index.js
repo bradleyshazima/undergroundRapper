@@ -4,6 +4,6 @@ import Home from './Home.jsx';
 import Links from './Links.jsx';
 import Shows from './Shows.jsx';
 import Video from './Video.jsx';
-import Store from './Store.jsx';
+import Error404 from './Error404.jsx';
 
-export { Home, Gallery, Discography, Shows, Links, Video, Store }
+export { Home, Gallery, Discography, Shows, Links, Video, Error404 }
