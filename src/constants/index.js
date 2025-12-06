@@ -1,4 +1,3 @@
-// We're using placeholder images. You can replace the URLs with your actual image paths.
 export const navLinks = [
   {
     id: 1,
@@ -14,14 +13,14 @@ export const navLinks = [
 
   {
     id: 3,
-    title: "NEXT TOUR",
+    title: "NEXT SHOW",
     href: "/tour"
   },
 
   {
     id: 4,
     title: "NEW MERCH DROPS",
-    href: "https://underground-dept.netlify.app"
+    href: "https://underground-dept.xyz"
   },
 ];
 

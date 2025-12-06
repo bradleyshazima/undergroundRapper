@@ -3,7 +3,7 @@ import { Navbar, Hero} from '../components'
 
 const Home = () => {
   return (
-    <section className='w-full h-screen'>
+    <section className='w-full h-full'>
       <Navbar />
       <Hero />
     </section>

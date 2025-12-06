@@ -6,9 +6,8 @@ const Hero = () => {
   return (
       <section
         id="hero"
-        className={`w-full h-screen flex items-center xl:px-28 lg:px-24 md:px-16 sm:px-16 xs:px-4 relative`}
+        className={`w-full h-screen flex items-center xl:px-28 lg:px-24 md:px-16 sm:px-16 xs:px-4 `}
       >
-        {/* Left content */}
         <div className="flex-1 h-full flex flex-col xs:items-center justify-center">
           <div className="flex xs:hidden text-white">
             <h3 className="z-10 deutsch xl:text-[100px] lg:text-[120px] md:text-8xl sm:text-8xl font-bold leading-none">
@@ -28,21 +27,6 @@ const Hero = () => {
           <h3 className="z-10 text-5xl xs:flex hidden text-red-700 bebas font-[900] italic">GROUND</h3>
         </div>
 
-        <div className="w-1/4 z-20">
-          <ul className="flex flex-col w-full">
-            {navLinks.map((link) => (
-              <li
-              >
-                <a
-                  className="bebas text-5xl font-[900] italic text-white w-full h-20 flex items-center justify-end px-4 nav-link"
-                  href={link.href}
-                >
-                  {link.title}
-                </a>
-              </li>
-            ))}
-          </ul>
-        </div>
       </section>
   );
 };

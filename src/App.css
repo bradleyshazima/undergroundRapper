@@ -86,23 +86,12 @@
 
 
 #hero {
-    position: relative;
-}
-
-#hero::before {
-    background-image: url(./assets/images/brad.jpg);
-    width: 100%;
-    height: 100%;
-    position: absolute;
-    content: " ";
+    background-image: url(https://res.cloudinary.com/bradley-cdn/image/upload/f_auto,q_auto,e_grayscale/v1765007432/brad_hfmihl.jpg);
     background-position: bottom;
     background-size: cover;
     background-attachment: fixed;
-    top: 0;
-    left: 0;
-    filter: grayscale(1);
-
 }
+
 
 .outline-text {
     font-size: 48px;
