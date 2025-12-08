@@ -29,7 +29,7 @@ const Navbar = () => {
         }`}
       >
         {/* Main Navbar for larger screens */}
-        <div className="w-full flex justify-between h-auto px-20 sm:px-4 py-2 xs:hidden">
+        <div className="w-full hidden md:flex justify-between h-auto px-20 sm:px-4 py-2">
           <ul className="flex w-1/3 items-center justify-center gap-8">
             <li>
               <Link
@@ -42,7 +42,7 @@ const Navbar = () => {
               </Link>
             </li>
             <li>
-              <Link className="nav-link bebas text-xl md:text-lg sm:text-base" to="/discography">
+              <Link className="nav-link bebas text-xl md:text-lg sm:text-base" to="/music">
                 MUSIC
               </Link>
             </li>
@@ -53,7 +53,7 @@ const Navbar = () => {
             </li>
           </ul>
           <div>
-            <img src={URlogo} alt="Logo" className="h-16 md:h-12" />
+            <img src={URlogo} alt="Logo" className="h-12 md:h-16" />
           </div>
           <ul className="flex w-1/3 items-center justify-center gap-8">
             <li>
@@ -76,7 +76,7 @@ const Navbar = () => {
         </div>
 
         {/* Mobile Navbar for extra small screens */}
-        <div className="w-full xs:flex items-center justify-between py-4 hidden">
+        <div className="w-full flex items-center justify-between py-4 md:hidden">
           <div className="flex-1 flex justify-center">
             <img src={URlogo} alt="Logo" className="h-10" />
           </div>
@@ -99,7 +99,7 @@ const Navbar = () => {
         <ul className="flex flex-col items-center p-6 gap-6">
           <li>
             <Link
-              className="text-white text-lg cursor-pointer bebas nav-link"
+              className="text-white text-4xl cursor-pointer bebas nav-link"
               to="/"
               smooth={true}
               duration={500}
@@ -109,23 +109,23 @@ const Navbar = () => {
             </Link>
           </li>
           <li>
-            <Link className="text-white text-lg bebas nav-link" to="/discography" onClick={toggleMenu}>
+            <Link className="text-white text-4xl bebas nav-link" to="/music" onClick={toggleMenu}>
               MUSIC
             </Link>
           </li>
           <li>
-            <Link className="text-white text-lg bebas nav-link" to="/video" onClick={toggleMenu}>
-              VIDEO
+            <Link className="text-white text-4xl bebas nav-link" to="/videos" onClick={toggleMenu}>
+              VISUALS
             </Link>
           </li>
           <li>
-            <Link className="text-white text-lg bebas nav-link" to="/gallery" onClick={toggleMenu}>
+            <Link className="text-white text-4xl bebas nav-link" to="/gallery" onClick={toggleMenu}>
               GALLERY
             </Link>
           </li>
           <li>
             <Link
-              className="text-white text-lg cursor-pointer bebas nav-link"
+              className="text-white text-4xl cursor-pointer bebas nav-link"
               to="/shows&tours"
               smooth={true}
               duration={500}
