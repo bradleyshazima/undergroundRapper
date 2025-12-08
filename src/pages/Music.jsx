@@ -1,14 +1,12 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useAudio } from '../context/AudioContext';
 import { Play, Pause, Heart, Shuffle, SkipBack, SkipForward, Repeat, Volume2, Mic2 } from 'lucide-react';
 import { Navbar } from '../components'
 import musicData from '../data/index'
 import { Spotify, Apple } from '../assets/images';
 
 const Music = () => {
-  const [currentTrack, setCurrentTrack] = useState(null);
-  const [isPlaying, setIsPlaying] = useState(false);
-  const [currentTime, setCurrentTime] = useState(0);
-  const [duration, setDuration] = useState(0);
+  const { currentTrack, setCurrentTrack, isPlaying, setIsPlaying, currentTime, setCurrentTime, duration, setDuration, audioRef } = useAudio();
   const [volume, setVolume] = useState(1);
   const [showLyrics, setShowLyrics] = useState(true);
   const [selectedTab, setSelectedTab] = useState('released');
@@ -16,7 +14,6 @@ const Music = () => {
   const [shuffle, setShuffle] = useState(false);
   const [repeat, setRepeat] = useState('all');
   
-  const audioRef = useRef(null);
 
   const allTracks = [...musicData.released, ...musicData.unreleased];
 
@@ -27,6 +24,17 @@ const Music = () => {
       setCurrentTrack(firstTrack);
     }
   }, []);
+  
+  useEffect(() => {
+    // When tab switches, check if current track exists in new tab
+    const trackList = selectedTab === 'released' ? musicData.released : musicData.unreleased;
+    const trackExists = trackList.some(t => t.id === currentTrack?.id);
+    
+    if (currentTrack && !trackExists) {
+      // Current track not in this tab, stop highlighting it
+      // but keep it playing
+    }
+  }, [selectedTab]);
 
   useEffect(() => {
     if (audioRef.current) {
@@ -36,7 +44,12 @@ const Music = () => {
 
   useEffect(() => {
     const audio = audioRef.current;
-    if (!audio) return;
+    if (!audio || !currentTrack) return;
+
+    // Set the audio source when track changes
+    if (audio.src !== currentTrack.audioUrl) {
+      audio.src = currentTrack.audioUrl;
+    }
 
     const updateTime = () => setCurrentTime(audio.currentTime);
     const updateDuration = () => setDuration(audio.duration);
@@ -88,12 +101,13 @@ const Music = () => {
 
   const handleSeek = (e) => {
     const audio = audioRef.current;
-    if (audio) {
+    if (audio && duration) {
       const rect = e.currentTarget.getBoundingClientRect();
       const x = e.clientX - rect.left;
       const percentage = x / rect.width;
-      audio.currentTime = percentage * audio.duration;
-      setCurrentTime(newTime); 
+      const newTime = percentage * audio.duration;
+      audio.currentTime = newTime;
+      setCurrentTime(newTime);
     }
   };
 
@@ -190,7 +204,7 @@ const TracksDisplay = ({ tracks, category }) => {
           <div
             key={track.id}
             className={`flex items-center gap-4 p-4 rounded-lg cursor-pointer transition-colors duration-150 ${
-              currentTrack?.id === track.id ? 'bg-gray-800/50' : 'hover:bg-gray-800/30'
+              currentTrack?.id === track.id && isPlaying ? 'bg-gray-800/50' : 'hover:bg-gray-800/30'
             }`}
             onClick={() => playTrack(track)}
           >

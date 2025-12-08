@@ -74,8 +74,8 @@ const Gallery = () => {
     <>
       <Navbar />
       
-      <div className="min-h-screen pt-24 pb-12 px-4 md:px-8">
-        <div className="max-w-7xl mx-auto">
+      <div className="h-dvh pt-24 pb-12 px-4 md:px-8 overflow-y-auto">
+        <div className="max-w-7xl mx-auto overflow-y-auto">
           <h1 className="text-4xl md:text-6xl bebas text-white mb-2 text-center">
             GALLERY
           </h1>
@@ -125,7 +125,7 @@ const Gallery = () => {
       {/* Lightbox Modal */}
       {selectedImage && (
         <div
-          className="fixed inset-0 bg-black/95 z-50 flex items-center justify-center p-4"
+          className="fixed inset-0 bg-black/40 backdrop-blur-md z-50 flex items-center justify-center p-4"
           onClick={() => setSelectedImage(null)}
         >
           <button
@@ -150,7 +150,7 @@ const Gallery = () => {
             className="absolute bottom-8 bg-white text-black px-6 py-3 rounded-full hover:scale-105 transition-transform flex items-center gap-2"
           >
             <Download className="w-5 h-5" />
-            <span className="font-medium">Download</span>
+            <span className="font-medium sf">Download</span>
           </button>
         </div>
       )}

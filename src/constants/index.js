@@ -1,34 +1,11 @@
-export const navLinks = [
-  {
-    id: 1,
-    title: "NEW MUSIC",
-    href: "/music"
-  },
-
-  {
-    id: 2,
-    title: "NEW VIDEO",
-    href: "/videos"
-  },
-
-  {
-    id: 3,
-    title: "NEXT SHOW",
-    href: "/tour"
-  },
-
-  {
-    id: 4,
-    title: "NEW MERCH DROPS",
-    href: "https://underground-dept.xyz"
-  },
-];
-
-
 const videos = [
   {
+    title: "RUN THIS TOWN",
+    url: "https://www.youtube.com/embed/7tw0oII1QoY?modestbranding=1&rel=0&controls=0&showinfo=0"
+  },
+  {
     title: "SNAKES N' LADDERS",
-    url: "https://www.youtube.com/embed/MUvoTsyhrPM?si=FEw-cDVGJGnOGdx3"
+    url: "https://www.youtube.com/embed/MUvoTsyhrPM?modestbranding=1&rel=0&controls=0&showinfo=0"
   },
   {
     title: "FATHERS' DAY",

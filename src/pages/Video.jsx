@@ -9,7 +9,7 @@ const Video = () => {
   return (
     <>
     <Navbar />
-    <section className="pt-20 px-6 sm:px-16 pb-10 bg-[#131313] text-white min-h-screen">
+    <section className="pt-20 px-6 sm:px-16 pb-10 text-white h-dvh overflow-y-scroll">
       {/* Section Title */}
       <div className="w-full py-3 px-10 flex items-center justify-center">
         <h1 className="text-4xl lg:text-6xl bebas text-white font-medium">
@@ -32,7 +32,7 @@ const Video = () => {
                 allowFullScreen
               ></iframe>
             </div>
-            <p className="mt-2 lg:text-2xl font-medium sf">{video.title}</p>
+            <p className="mt-2 lg:text-2xl font-medium sf capitalize">{video.title.toLowerCase()}</p>
           </div>
         ))}
       </div>

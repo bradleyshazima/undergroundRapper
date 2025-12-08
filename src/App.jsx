@@ -1,6 +1,7 @@
 import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
 import './App.css';
 import { Video, Home, Gallery, Music, Links, Shows, Error404 } from './pages';
+import  {AudioProvider}  from './context/AudioContext';
 
 function AppLayout() {
   return (
@@ -24,7 +25,9 @@ function AppLayout() {
 function App() {
   return (
     <Router>
-      <AppLayout />
+      <AudioProvider>
+        <AppLayout />
+      </AudioProvider>
     </Router>
   );
 }
