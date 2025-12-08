@@ -23,6 +23,7 @@ const Hero = () => {
           <p className="text-white sf font-medium text-center md:text-start md:w-80 lg:w-[440px] text-base lg:text-xl mt-4 txt-shadow">They call me Acense. A Rapper, Songwriter and Recording Artist from Nairobi, Kenya.</p>
         </div>
 
+        {/* Mini player that has text that says, New song out now and when user clicks on that player it takes them to the /music page */}
         <div>
 
         </div>
