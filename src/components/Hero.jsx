@@ -63,7 +63,7 @@ const Hero = () => {
       {/* Mini Player */}
       <div
         onClick={handleNavigateToMusic}
-        className="absolute flex bottom-8 right-1/2 translate-x-1/2 w-4/5 md:w-[240px] lg:right-8 bg-black/80 backdrop-blur-md border border-white/20 rounded-lg p-4 cursor-pointer hover:bg-black/90 transition-all hover:scale-105 group"
+        className="absolute flex bottom-8 right-1/2 translate-x-1/2 w-4/5 md:w-[240px] lg:right-64 bg-black/80 backdrop-blur-md border border-white/20 rounded-lg p-4 cursor-pointer hover:bg-black/90 transition-all hover:scale-105 group"
       >
         <div className="flex items-center gap-4">
           <div className="relative">

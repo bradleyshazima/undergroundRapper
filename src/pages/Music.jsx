@@ -199,7 +199,7 @@ const TracksDisplay = ({ tracks, category }) => {
     );
     
     return (
-      <div className="grid grid-cols-1 gap-2 h-full xl:h-auto">
+      <div className="grid grid-cols-1 gap-2 h-full xl:h-auto md:mb-20">
         {sortedTracks.map((track) => (
           <div
             key={track.id}
