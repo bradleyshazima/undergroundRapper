@@ -17,6 +17,17 @@ export const AudioProvider = ({ children }) => {
   const [duration, setDuration] = useState(0);
   const audioRef = useRef(null);
 
+  const loadAndPlay = (track) => {
+    setCurrentTrack(track);
+    setCurrentTime(0);
+    setTimeout(() => {
+      if (audioRef.current) {
+        audioRef.current.src = track.audioUrl;
+        audioRef.current.play().then(() => setIsPlaying(true)).catch(() => {});
+      }
+    }, 100);
+  };
+
   return (
     <AudioContext.Provider
       value={{
@@ -29,6 +40,7 @@ export const AudioProvider = ({ children }) => {
         duration,
         setDuration,
         audioRef,
+        loadAndPlay,
       }}
     >
       {children}

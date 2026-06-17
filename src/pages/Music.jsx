@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useAudio } from '../context/AudioContext';
-import { Play, Pause, Heart, Shuffle, SkipBack, SkipForward, Repeat, Volume2, Mic2 } from 'lucide-react';
+import { Play, Pause, Heart, Shuffle, SkipBack, SkipForward, Repeat, Volume2, Mic2, Share2 } from 'lucide-react';
 import { Navbar } from '../components'
 import musicData from '../data/index'
 import { Spotify, Apple } from '../assets/images';
@@ -254,6 +254,17 @@ const TracksDisplay = ({ tracks, category }) => {
                   }`}
                 />
               </button>
+
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  navigator.clipboard.writeText(`${window.location.origin}/track/${track.id}`);
+                }}
+                className="hover:scale-110 transition-transform"
+              >
+                <Share2 className="w-5 h-5 text-gray-400" />
+              </button>
+
             </div>          
           </div>
         ))}
@@ -541,8 +552,6 @@ const TracksDisplay = ({ tracks, category }) => {
           </button>
         </div>
       )}
-
-      <audio ref={audioRef} src={currentTrack?.audioUrl} />
     </div>
     </>
   );
