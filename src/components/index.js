@@ -6,6 +6,7 @@ import NewRelease from './NewRelease.jsx'
 import Stream from './Stream.jsx'
 import Bio from './Bio.jsx'
 import CircularText from './CircularText.jsx'
+import CheckoutModal from './CheckoutModal.jsx'
 
 
-export { Contact, Footer, Hero, Navbar, Stream, NewRelease, Bio, CircularText }
+export { Contact, Footer, Hero, Navbar, Stream, NewRelease, Bio, CircularText, CheckoutModal };

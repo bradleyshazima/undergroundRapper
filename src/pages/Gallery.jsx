@@ -74,7 +74,7 @@ const Gallery = () => {
     <>
       <Navbar />
       
-      <section className="h-dvh pt-20 pb-12 px-4 md:px-20 overflow-y-auto abstract-bg">
+      <section className="min-h-screen pt-20 pb-12 px-4 md:px-20 abstract-bg">
         {/* ── Giant headline block ── */}
         <div className="relative pb-0 overflow-hidden">
           <h1
@@ -96,7 +96,7 @@ const Gallery = () => {
           </p>
         </div>
 
-        <div className="max-w-7xl mx-auto overflow-y-auto">
+        <div className="max-w-7xl mx-auto">
 
           {/* Bento Grid */}
           <div className="grid grid-cols-2 md:grid-cols-4 auto-rows-[200px] gap-4">

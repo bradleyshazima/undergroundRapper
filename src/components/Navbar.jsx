@@ -79,6 +79,16 @@ const Navbar = () => {
                 SHOWS
               </Link>
             </li>
+            <li>
+              <Link
+                className="nav-link jakarta font-semibold text-xl md:text-lg sm:text-base cursor-pointer"
+                to="/shop"
+                smooth={true}
+                duration={500}
+              >
+                SHOP
+              </Link>
+            </li>
           </ul>
         </div>
 
@@ -144,6 +154,17 @@ const Navbar = () => {
               onClick={toggleMenu}
             >
               SHOWS & TOURS
+            </Link>
+          </li>
+          <li>
+            <Link
+              className="text-white text-4xl cursor-pointer jakarta font-semibold nav-link"
+              to="/shop"
+              smooth={true}
+              duration={500}
+              onClick={toggleMenu}
+            >
+              SHOP
             </Link>
           </li>
         </ul>
