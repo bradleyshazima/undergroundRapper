@@ -99,12 +99,12 @@ const Links = () => {
         {/* Header */}
         <div className="text-center mb-8 md:mb-12">
           <img 
-            src="https://res.cloudinary.com/bradley-cdn/image/upload/v1765007436/brad2_ao3pac.jpg"
+            src="https://res.cloudinary.com/bradley-cdn/image/upload/q_auto/f_auto/v1765007436/brad2_ao3pac.jpg"
             alt="Acense"
             className="w-24 h-24 md:w-32 md:h-32 rounded-full mx-auto mb-4 border-4 border-red-700 object-cover"
           />
           <h1 className="deutsch text-4xl md:text-6xl mb-2">ACENSE</h1>
-          <p className="sf text-sm md:text-base text-gray-400">The Underground Rapper</p>
+          <p className="jakarta text-sm md:text-base text-gray-400">The Underground Rapper</p>
         </div>
 
         {/* Bento Grid */}
@@ -118,11 +118,11 @@ const Links = () => {
                 onClick={() => handleLinkClick(link.href)}
                 className={`${getSizeClass(link.size)} bg-gradient-to-br ${link.color} rounded-2xl p-4 md:p-6 flex flex-col justify-between hover:scale-[1.02] transition-all group cursor-pointer border border-white/10`}
               >
-                <Icon className="w-6 h-6 md:w-8 md:h-8 group-hover:scale-110 transition-transform" />
+                <Icon className="w-6 h-6 md:w-8 md:h-8 group-hover:scale-110 transition-tranjakartaorm" />
                 <div>
                   <h3 className="bebas text-lg md:text-2xl mb-1">{link.title}</h3>
                   {link.subtitle && (
-                    <p className="sf text-xs md:text-sm text-white/70">{link.subtitle}</p>
+                    <p className="jakarta text-xs md:text-sm text-white/70">{link.subtitle}</p>
                   )}
                 </div>
               </div>
@@ -143,7 +143,7 @@ const Links = () => {
                 <img 
                   src={platform.logo} 
                   alt={platform.name}
-                  className="h-6 md:h-8 group-hover:scale-110 transition-transform"
+                  className="h-6 md:h-8 group-hover:scale-110 transition-tranjakartaorm"
                 />
               </div>
             ))}
@@ -169,7 +169,7 @@ const Links = () => {
         {/* Newsletter Signup */}
         <div className="bg-gradient-to-br from-red-900/20 to-red-700/20 rounded-2xl p-6 md:p-8 border border-red-700/30">
           <h3 className="bebas text-2xl md:text-3xl mb-2 text-center">Join the Inner Circle</h3>
-          <p className="sf text-xs md:text-sm text-gray-300 text-center mb-4 md:mb-6">
+          <p className="jakarta text-xs md:text-sm text-gray-300 text-center mb-4 md:mb-6">
             Get exclusive unreleased tracks, early access to merch, and behind-the-scenes content
           </p>
           <div className="flex flex-col sm:flex-row gap-2 md:gap-3">
@@ -178,7 +178,7 @@ const Links = () => {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               placeholder="Enter your email"
-              className="flex-1 px-4 py-3 rounded-lg bg-white/10 border border-white/20 focus:border-red-700 focus:outline-none sf text-sm md:text-base"
+              className="flex-1 px-4 py-3 rounded-lg bg-white/10 border border-white/20 focus:border-red-700 focus:outline-none jakarta text-sm md:text-base"
             />
             <button
               onClick={handleNewsletterSubmit}
@@ -187,14 +187,14 @@ const Links = () => {
               Subscribe
             </button>
           </div>
-          <p className="sf text-xs text-gray-400 text-center mt-3">
+          <p className="jakarta text-xs text-gray-400 text-center mt-3">
             Join 300+ real fans supporting the movement
           </p>
         </div>
 
         {/* Footer */}
         <div className="text-center mt-8 md:mt-12">
-          <p className="sf text-xs md:text-sm text-gray-500">
+          <p className="jakarta text-xs md:text-sm text-gray-500">
             © 2026 Acense. Underground Rapper Label.
           </p>
         </div>

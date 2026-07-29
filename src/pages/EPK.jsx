@@ -61,11 +61,11 @@ const EPK = () => {
         <div className="relative h-[40vh] md:h-[50vh] bg-gradient-to-b from-red-950/20 to-[#0a0a0a]">
           <div 
             className="absolute inset-0 bg-cover bg-center opacity-30"
-            style={{ backgroundImage: 'url(https://res.cloudinary.com/bradley-cdn/image/upload/v1765007432/brad_hfmihl.jpg)' }}
+            style={{ backgroundImage: 'url(https://res.cloudinary.com/bradley-cdn/image/upload/q_auto/f_auto/v1765007432/brad_hfmihl.jpg)' }}
           />
           <div className="relative h-full flex flex-col items-center justify-center px-4">
             <h1 className="deutsch text-5xl md:text-7xl lg:text-9xl mb-4">ACENSE</h1>
-            <p className="sf text-base md:text-xl lg:text-2xl text-gray-400">Electronic Press Kit</p>
+            <p className="jakarta text-base md:text-xl lg:text-2xl text-gray-400">Electronic Press Kit</p>
             <button 
               onClick={downloadEPK}
               className="mt-6 md:mt-8 bg-red-700 hover:bg-red-800 px-6 md:px-8 py-2 md:py-3 rounded-lg flex items-center gap-2 transition-colors bebas text-base md:text-lg"
@@ -113,24 +113,24 @@ const EPK = () => {
                 <div className="space-y-4 md:space-y-6">
                   <div>
                     <h3 className="bebas text-2xl md:text-3xl text-red-700 mb-2">ARTIST BIO</h3>
-                    <p className="sf text-sm md:text-base text-gray-300 leading-relaxed">{epkData.bio.description}</p>
+                    <p className="jakarta text-sm md:text-base text-gray-300 leading-relaxed">{epkData.bio.description}</p>
                   </div>
                   <div className="grid grid-cols-2 gap-3 md:gap-4">
                     <div>
-                      <p className="sf text-gray-500 text-xs md:text-sm">Stage Name</p>
-                      <p className="sf font-semibold text-sm md:text-base">{epkData.bio.stageName}</p>
+                      <p className="jakarta text-gray-500 text-xs md:text-sm">Stage Name</p>
+                      <p className="jakarta font-semibold text-sm md:text-base">{epkData.bio.stageName}</p>
                     </div>
                     <div>
-                      <p className="sf text-gray-500 text-xs md:text-sm">Genre</p>
-                      <p className="sf font-semibold text-sm md:text-base">{epkData.bio.genre}</p>
+                      <p className="jakarta text-gray-500 text-xs md:text-sm">Genre</p>
+                      <p className="jakarta font-semibold text-sm md:text-base">{epkData.bio.genre}</p>
                     </div>
                     <div>
-                      <p className="sf text-gray-500 text-xs md:text-sm">Location</p>
-                      <p className="sf font-semibold text-sm md:text-base">{epkData.bio.location}</p>
+                      <p className="jakarta text-gray-500 text-xs md:text-sm">Location</p>
+                      <p className="jakarta font-semibold text-sm md:text-base">{epkData.bio.location}</p>
                     </div>
                     <div>
-                      <p className="sf text-gray-500 text-xs md:text-sm">Years Active</p>
-                      <p className="sf font-semibold text-sm md:text-base">{epkData.bio.yearsActive}</p>
+                      <p className="jakarta text-gray-500 text-xs md:text-sm">Years Active</p>
+                      <p className="jakarta font-semibold text-sm md:text-base">{epkData.bio.yearsActive}</p>
                     </div>
                   </div>
                 </div>
@@ -145,8 +145,8 @@ const EPK = () => {
               <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
                 {Object.entries(epkData.stats).map(([key, value]) => (
                   <div key={key} className="bg-white/5 p-4 md:p-6 rounded-lg border border-white/10 hover:border-red-700 transition-colors">
-                    <p className="sf text-3xl md:text-4xl lg:text-5xl font-bold text-red-700 mb-2">{value}</p>
-                    <p className="sf text-xs md:text-sm text-gray-400 capitalize">{key.replace(/([A-Z])/g, ' $1')}</p>
+                    <p className="jakarta text-3xl md:text-4xl lg:text-5xl font-bold text-red-700 mb-2">{value}</p>
+                    <p className="jakarta text-xs md:text-sm text-gray-400 capitalize">{key.replace(/([A-Z])/g, ' $1')}</p>
                   </div>
                 ))}
               </div>
@@ -160,7 +160,7 @@ const EPK = () => {
               <div className="space-y-4">
                 {epkData.press.map((item, index) => (
                   <div key={index} className="bg-white/5 p-4 md:p-6 rounded-lg border-l-4 border-red-700">
-                    <p className="sf text-sm md:text-base text-gray-300">{item}</p>
+                    <p className="jakarta text-sm md:text-base text-gray-300">{item}</p>
                   </div>
                 ))}
               </div>
@@ -177,11 +177,11 @@ const EPK = () => {
                     key={index}
                     className="bg-white/5 p-6 md:p-8 rounded-lg border border-white/10 hover:border-red-700 transition-all cursor-pointer group"
                   >
-                    <div className="text-4xl md:text-5xl mb-4 group-hover:scale-110 transition-transform">
+                    <div className="text-4xl md:text-5xl mb-4 group-hover:scale-110 transition-tranjakartaorm">
                       {getAssetIcon(asset.type)}
                     </div>
                     <h4 className="bebas text-xl md:text-2xl mb-2">{asset.type}</h4>
-                    <p className="sf text-sm md:text-base text-gray-400">{asset.count} files available</p>
+                    <p className="jakarta text-sm md:text-base text-gray-400">{asset.count} files available</p>
                   </div>
                 ))}
               </div>
@@ -196,8 +196,8 @@ const EPK = () => {
                 <div className="bg-white/5 p-4 md:p-6 rounded-lg border border-white/10 flex items-start gap-3 md:gap-4">
                   <Mail className="w-5 h-5 md:w-6 md:h-6 text-red-700 mt-1 flex-shrink-0" />
                   <div className="min-w-0">
-                    <p className="sf font-semibold mb-1 text-sm md:text-base">General Inquiries</p>
-                    <a href={`mailto:${epkData.contact.email}`} className="sf text-xs md:text-sm text-gray-400 hover:text-red-700 break-all">
+                    <p className="jakarta font-semibold mb-1 text-sm md:text-base">General Inquiries</p>
+                    <a href={`mailto:${epkData.contact.email}`} className="jakarta text-xs md:text-sm text-gray-400 hover:text-red-700 break-all">
                       {epkData.contact.email}
                     </a>
                   </div>
@@ -206,16 +206,16 @@ const EPK = () => {
                 <div className="bg-white/5 p-4 md:p-6 rounded-lg border border-white/10 flex items-start gap-3 md:gap-4">
                   <Phone className="w-5 h-5 md:w-6 md:h-6 text-red-700 mt-1 flex-shrink-0" />
                   <div>
-                    <p className="sf font-semibold mb-1 text-sm md:text-base">Phone</p>
-                    <p className="sf text-xs md:text-sm text-gray-400">{epkData.contact.phone}</p>
+                    <p className="jakarta font-semibold mb-1 text-sm md:text-base">Phone</p>
+                    <p className="jakarta text-xs md:text-sm text-gray-400">{epkData.contact.phone}</p>
                   </div>
                 </div>
 
                 <div className="bg-white/5 p-4 md:p-6 rounded-lg border border-white/10 flex items-start gap-3 md:gap-4">
                   <Mail className="w-5 h-5 md:w-6 md:h-6 text-red-700 mt-1 flex-shrink-0" />
                   <div className="min-w-0">
-                    <p className="sf font-semibold mb-1 text-sm md:text-base">Booking</p>
-                    <a href={`mailto:${epkData.contact.booking}`} className="sf text-xs md:text-sm text-gray-400 hover:text-red-700 break-all">
+                    <p className="jakarta font-semibold mb-1 text-sm md:text-base">Booking</p>
+                    <a href={`mailto:${epkData.contact.booking}`} className="jakarta text-xs md:text-sm text-gray-400 hover:text-red-700 break-all">
                       {epkData.contact.booking}
                     </a>
                   </div>
@@ -224,8 +224,8 @@ const EPK = () => {
                 <div className="bg-white/5 p-4 md:p-6 rounded-lg border border-white/10 flex items-start gap-3 md:gap-4">
                   <MapPin className="w-5 h-5 md:w-6 md:h-6 text-red-700 mt-1 flex-shrink-0" />
                   <div>
-                    <p className="sf font-semibold mb-1 text-sm md:text-base">Based In</p>
-                    <p className="sf text-xs md:text-sm text-gray-400">{epkData.bio.location}</p>
+                    <p className="jakarta font-semibold mb-1 text-sm md:text-base">Based In</p>
+                    <p className="jakarta text-xs md:text-sm text-gray-400">{epkData.bio.location}</p>
                   </div>
                 </div>
               </div>

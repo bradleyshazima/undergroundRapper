@@ -6,6 +6,5 @@ import Shows from './Shows.jsx';
 import Video from './Video.jsx';
 import Error404 from './Error404.jsx';
 import EPK from './EPK.jsx';
- import TrackPlayer from './TrackPlayer.jsx';
 
-export { Home, Gallery, Music, Shows, Links, Video, Error404, EPK, TrackPlayer };
+export { Home, Gallery, Music, Shows, Links, Video, Error404, EPK};

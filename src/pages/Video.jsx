@@ -1,43 +1,88 @@
 import React from "react";
-import videos from '../constants'
+import videos from '../video-data';
 import { Navbar } from "../components";
-
-const video = []
-
 
 const Video = () => {
   return (
     <>
-    <Navbar />
-    <section className="pt-20 px-6 sm:px-16 pb-10 text-white h-dvh overflow-y-scroll">
-      {/* Section Title */}
-      <div className="w-full py-3 px-10 flex items-center justify-center">
-        <h1 className="text-4xl lg:text-6xl bebas text-white font-medium">
-          Visuals
+      <Navbar />
+      <section className="min-h-screen pt-12 lg:pt-20 text-white px-4 lg:px-32 abstract-bg">
+
+      {/* ── Giant headline block ── */}
+      <div className="relative pb-0 overflow-hidden md:px-12">
+        <h1
+          className="md:py-8 jakarta text-7xl md:text-9xl xl:text-[260px] font-black uppercase leading-none tracking-tight select-none bg-clip-text text-transparent"
+          style={{
+            backgroundImage: "linear-gradient(135deg, #0e0e0e 0%, #d24700 50%, #0e0e0e 100%)",
+          }}
+        >
+          VIDEOS
         </h1>
+
+        <p
+          className="absolute top-6 right-8 text-[9px] sm:text-[10px] uppercase tracking-widest
+                    text-right max-w-[155px] text-white/40 leading-loose hidden md:block"
+        >
+          NI SAWA NAJUA ME SI SLIM SHADY BUT EVERYBODY'S,
+          GONNA EMINEM [HEAR MY NAME]
+        </p>
       </div>
 
-      {/* Video List */}
-      <div className="w-full flex flex-wrap justify-center gap-8 lg:gap-12">
-        {videos.map((video, index) => (
-          <div key={index} className="flex flex-col items-center w-full md:w-[45%] xl:w-[29%]">
-            <div className="w-full aspect-video">
-              <iframe
-                className="w-full h-full"
-                src={video.url}
-                title={video.title}
-                frameBorder="0"
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                referrerPolicy="strict-origin-when-cross-origin"
-                allowFullScreen
-              ></iframe>
-            </div>
-            <p className="mt-2 lg:text-2xl font-medium sf capitalize">{video.title.toLowerCase()}</p>
-          </div>
-        ))}
-      </div>
-    </section>
-  </>
+        {/* Top divider */}
+        <div className="border-t border-white/20 mt-0" />
+
+        {/* ── Video rows ── */}
+        <div className="w-full md:px-12 mb-12">
+          {videos.map((video, index) => (
+            <React.Fragment key={index}>
+              <div
+                className="
+                  grid items-center gap-x-4 sm:gap-x-8 py-4 sm:py-5
+                  grid-cols-[2rem_1fr_auto_4rem]
+                  sm:grid-cols-[3rem_1fr_auto_8rem]
+                "
+              >
+                <span className="text-[11px] text-white/35 geomanist tabular-nums">
+                  {String(index + 1).padStart(2, "0")}
+                </span>
+
+                {/* Track title */}
+                <span className="text-[11px] sm:text-[13px] font-semibold tracking-[0.2em] uppercase truncate">
+                  {video.title}
+                </span>
+
+                {/* Play video */}
+                <a
+                  href={video.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="
+                    text-[9px] sm:text-[11px] tracking-[0.18em] uppercase
+                    text-white/70 hover:text-white transition-colors duration-200
+                    whitespace-nowrap xl:mr-80 jakarta
+                  "
+                >
+                  PLAY VIDEO
+                </a>
+
+                <div className="w-full aspect-video overflow-hidden bg-white/5 flex-shrink-0">
+                  <img
+                    src={video.thumbnail}
+                    alt={video.title}
+                    className="w-full h-full object-cover grayscale hover:grayscale-0 transition-all duration-300"
+                    loading="lazy"
+                  />
+                </div>
+              </div>
+
+              {/* Row divider */}
+              <div className="border-t border-white/10" />
+            </React.Fragment>
+          ))}
+        </div>
+
+      </section>
+    </>
   );
 };
 
