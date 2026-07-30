@@ -2,15 +2,18 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { X, ShoppingBag, ArrowRight } from 'lucide-react';
 import { Navbar, CheckoutModal } from '../components';
-import { supabase } from '../config/supabase'; // ← add this
+import { supabase } from '../config/supabase';
+
 
 const Shop = () => {
   const navigate = useNavigate();
-  const [products, setProducts] = useState([]);       // ← replaces dummyProducts
+  const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [showNewsletter, setShowNewsletter] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState(null);
   const [restoreEmail, setRestoreEmail] = useState('');
+  const [newsletterEmail, setNewsletterEmail] = useState('');
+  const [newsletterLoading, setNewsletterLoading] = useState(false);
 
   // ── Fetch products from Supabase ──
   useEffect(() => {
@@ -35,17 +38,42 @@ const Shop = () => {
 
   // ── Newsletter timer ──
   useEffect(() => {
-    const timer = setTimeout(() => {
-      if (!localStorage.getItem('acense_newsletter')) {
-        setShowNewsletter(true);
+    const checkAndShowPopup = async () => {
+      if (sessionStorage.getItem('newsletter_dismissed')) return;
+      try {
+        const ipRes = await fetch('https://api.ipify.org?format=json');
+        const { ip } = await ipRes.json();
+        const { data } = await supabase
+          .from('newsletter')
+          .select('id')
+          .eq('ip_address', ip)
+          .maybeSingle();
+        if (!data) setTimeout(() => setShowNewsletter(true), 2000);
+      } catch {
+        setTimeout(() => setShowNewsletter(true), 2000);
       }
-    }, 2000);
-    return () => clearTimeout(timer);
+    };
+    checkAndShowPopup();
   }, []);
 
   const closeNewsletter = () => {
-    localStorage.setItem('acense_newsletter', 'true');
+    sessionStorage.setItem('newsletter_dismissed', 'true'); // shows again on new tab/session
     setShowNewsletter(false);
+  };
+
+  const handleNewsletterSubmit = async () => {
+    if (!newsletterEmail) return;
+    setNewsletterLoading(true);
+    try {
+      const ipRes = await fetch('https://api.ipify.org?format=json');
+      const { ip } = await ipRes.json();
+      await supabase.from('newsletter').insert([{ email: newsletterEmail, ip_address: ip }]);
+      setShowNewsletter(false); // permanent — IP is now in DB
+    } catch (e) {
+      console.error('Newsletter error:', e);
+    } finally {
+      setNewsletterLoading(false);
+    }
   };
 
   const handleRestorePurchase = (e) => {
@@ -56,7 +84,7 @@ const Shop = () => {
   return (
     <>
       <Navbar />
-      <section className="min-h-screen pt-12 lg:pt-20 pb-20 text-white px-4 lg:px-32 abstract-bg">
+      <section className="min-h-screen w-full pt-12 lg:pt-20 pb-20 text-white px-4 lg:px-32 abstract-bg overflow-x-hidden">
 
         {/* ── Giant headline ── */}
         <div className="relative pb-0 overflow-hidden md:px-12">
@@ -171,10 +199,16 @@ const Shop = () => {
               <input
                 type="email"
                 placeholder="EMAIL ADDRESS"
+                value={newsletterEmail}
+                onChange={(e) => setNewsletterEmail(e.target.value)}
                 className="flex-1 bg-black border border-white/20 px-4 py-3 text-white placeholder-white/30 focus:outline-none focus:border-[#d24700] uppercase text-xs tracking-widest"
               />
-              <button onClick={closeNewsletter} className="bg-white text-black px-6 font-bold uppercase text-xs tracking-widest hover:bg-[#d24700] hover:text-white transition-colors">
-                Subscribe
+              <button
+                onClick={handleNewsletterSubmit}
+                disabled={newsletterLoading}
+                className="bg-white text-black px-6 font-bold uppercase text-xs tracking-widest hover:bg-[#d24700] hover:text-white transition-colors disabled:opacity-50"
+              >
+                {newsletterLoading ? '...' : 'Subscribe'}
               </button>
             </div>
           </div>

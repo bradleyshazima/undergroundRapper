@@ -2,17 +2,44 @@ import React from 'react';
 import { useLocation, Navigate, Link } from 'react-router-dom';
 import { Download as DownloadIcon, FolderDown, Music, ArrowLeft } from 'lucide-react';
 import { Navbar } from '../components';
-
-const dummyFiles = [
-  { id: 1, name: '01_Intro_The_Awakening.wav', size: '45 MB' },
-  { id: 2, name: '02_Vultures_feat_Mapema.wav', size: '52 MB' },
-  { id: 3, name: '03_Street_Gospel.wav', size: '48 MB' },
-  { id: 4, name: 'Identity_Crisis_Digital_Booklet.pdf', size: '12 MB' },
-];
+import { useState, useEffect } from 'react';
+import { supabase } from '../config/supabase';
 
 const Download = () => {
   const location = useLocation();
   const { email, product } = location.state || {};
+
+  const [files, setFiles] = useState([]);
+  const [zipUrl, setZipUrl] = useState(null);
+  const [filesLoading, setFilesLoading] = useState(true);
+  const [orderInfo, setOrderInfo] = useState(product || null);
+
+  useEffect(() => {
+    if (!email) return;
+
+    const fetchFiles = async () => {
+      try {
+        const res = await fetch(`${import.meta.env.VITE_BACKEND_URL || 'http://localhost:5000'}/api/payments/get-files`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email }),
+        });
+        const data = await res.json();
+
+        if (!data.success) throw new Error(data.message);
+
+        setOrderInfo(data.product);
+        setZipUrl(data.zipUrl);
+        setFiles(data.files);
+      } catch (err) {
+        console.error('Failed to fetch files:', err.message);
+      } finally {
+        setFilesLoading(false);
+      }
+    };
+
+    fetchFiles();
+  }, [email]);
 
   // Protect route: if no email passed, send them back to shop
   if (!email) {
@@ -20,8 +47,11 @@ const Download = () => {
   }
 
   const handleDownloadAll = () => {
-    // In production, this would trigger a zip file download from your server/AWS/Cloudinary
-    alert("Starting download for the full IDENTITY CRISIS ZIP folder...");
+    if (zipUrl) {
+      window.open(zipUrl, '_blank');
+    } else {
+      alert('Full ZIP not available yet. Please download tracks individually.');
+    }
   };
 
   return (
@@ -48,8 +78,10 @@ const Download = () => {
                   />
                 </div>
                 <div>
-                  <h2 className="jakarta text-xl font-bold uppercase text-white">Identity Crisis (Digital Album)</h2>
-                  <p className="text-sm text-white/40 mt-1">High-Quality WAV Audio + Artwork</p>
+                  <h2 className="jakarta text-xl font-bold uppercase text-white">
+                    {orderInfo?.title || 'Your Purchase'}
+                  </h2>
+                  <p className="text-sm text-white/40 mt-1">High-Quality Audio + Artwork</p>
                 </div>
               </div>
               
@@ -66,25 +98,41 @@ const Download = () => {
               <h3 className="text-xs text-white/40 uppercase tracking-widest font-bold mb-4">Individual Files</h3>
               <div className="border-t border-white/10" />
               
-              {dummyFiles.map((file, index) => (
-                <div key={file.id}>
-                  <div className="flex items-center justify-between py-4 group hover:bg-white/5 px-4 transition-colors -mx-4">
-                    <div className="flex items-center gap-4">
-                      <Music className="w-4 h-4 text-white/30 group-hover:text-[#d24700]" />
-                      <span className="text-sm font-semibold tracking-wider text-white/80 group-hover:text-white transition-colors">
-                        {file.name}
-                      </span>
-                    </div>
-                    <div className="flex items-center gap-6">
-                      <span className="text-[10px] text-white/40 geomanist tabular-nums hidden sm:block">{file.size}</span>
-                      <button className="text-white/50 hover:text-white group-hover:scale-110 transition-all p-2">
-                        <DownloadIcon className="w-4 h-4" />
-                      </button>
-                    </div>
+                {filesLoading ? (
+                  <div className="py-8 text-center text-white/40 jakarta text-xs uppercase tracking-widest animate-pulse">
+                    Loading your files...
                   </div>
-                  <div className="border-t border-white/5" />
-                </div>
-              ))}
+                ) : files.length === 0 ? (
+                  <div className="py-8 text-center text-white/40 jakarta text-xs uppercase tracking-widest">
+                    No files found for this order. Contact itsacense@gmail.com
+                  </div>
+                ) : (
+                  files.map((file, index) => (
+                    <div key={file.id}>
+                      <div className="flex items-center justify-between py-4 group hover:bg-white/5 px-4 transition-colors -mx-4">
+                        <div className="flex items-center gap-4">
+                          <Music className="w-4 h-4 text-white/30 group-hover:text-[#d24700]" />
+                          <span className="text-sm font-semibold tracking-wider text-white/80 group-hover:text-white transition-colors">
+                            {file.name}
+                          </span>
+                        </div>
+                        <div className="flex items-center gap-6">
+                          <span className="text-[10px] text-white/40 geomanist tabular-nums hidden sm:block">{file.size}</span>
+                          <a
+                            href={file.file_url}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            download
+                            className="text-white/50 hover:text-white group-hover:scale-110 transition-all p-2"
+                          >
+                            <DownloadIcon className="w-4 h-4" />
+                          </a>
+                        </div>
+                      </div>
+                      <div className="border-t border-white/5" />
+                    </div>
+                  ))
+                )}
             </div>
 
           </div>
