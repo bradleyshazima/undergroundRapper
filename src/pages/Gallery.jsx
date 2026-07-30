@@ -1,22 +1,33 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Download, X } from 'lucide-react';
 import { Navbar } from '../components';
+import { supabase } from '../config/supabase';
 
 const Gallery = () => {
   const [selectedImage, setSelectedImage] = useState(null);
+  const [images, setImages] = useState([]);
 
-  // Your Cloudinary images - just add URLs here
-  const images = [
-    "https://res.cloudinary.com/bradley-cdn/image/upload/q_auto/f_auto/v1765224260/JPG09820_l936p9.jpg",
-    "https://res.cloudinary.com/bradley-cdn/image/upload/q_auto/f_auto/v1765007436/brad2_ao3pac.jpg",
-    "https://res.cloudinary.com/bradley-cdn/image/upload/q_auto/f_auto/v1765007432/brad_hfmihl.jpg",
-    "https://res.cloudinary.com/bradley-cdn/image/upload/q_auto/f_auto/v1765222202/DSC_0171_yy62yn.jpg",
-    "https://res.cloudinary.com/bradley-cdn/image/upload/q_auto/f_auto/v1765222277/DSC_0554-01_1_l6sox9.jpg",
-    "https://res.cloudinary.com/bradley-cdn/image/upload/q_auto/f_auto/v1765222272/hero_kxk9lx.jpg",
-    "https://res.cloudinary.com/bradley-cdn/image/upload/q_auto/f_auto/v1765223796/IMG_4154_dlynzz.heic",
-    "https://res.cloudinary.com/bradley-cdn/image/upload/q_auto/f_auto/v1765224257/JPG09826_hetve0.jpg",
+  // Fetch images from Supabase on mount
+  useEffect(() => {
+    const fetchGalleryImages = async () => {
+      const { data, error } = await supabase
+        .from('gallery')
+        .select('*')
+        .order('id', { ascending: false });
 
-  ];
+      if (error) {
+        console.error('Error fetching gallery images:', error);
+        return;
+      }
+
+      if (data) {
+        // Map rows to an array of image URL strings to match existing logic
+        setImages(data.map(item => item.image_url));
+      }
+    };
+
+    fetchGalleryImages();
+  }, []);
 
   // Bento grid size patterns that repeat
   const sizePatterns = [
@@ -34,9 +45,7 @@ const Gallery = () => {
 
   // Function to get optimized Cloudinary URL
   const getOptimizedUrl = (url, quality = 'auto:low') => {
-    // Check if it's a Cloudinary URL
-    if (url.includes('cloudinary.com')) {
-      // Insert quality tranjakartaormation before /upload/
+    if (url && url.includes('cloudinary.com')) {
       return url.replace('/upload/', `/upload/q_${quality},f_auto/`);
     }
     return url;
@@ -44,8 +53,7 @@ const Gallery = () => {
 
   // Function to get high quality download URL
   const getDownloadUrl = (url) => {
-    if (url.includes('cloudinary.com')) {
-      // Get original quality for download
+    if (url && url.includes('cloudinary.com')) {
       return url.replace('/upload/', '/upload/fl_attachment/');
     }
     return url;
@@ -97,7 +105,6 @@ const Gallery = () => {
         </div>
 
         <div className="max-w-7xl mx-auto">
-
           {/* Bento Grid */}
           <div className="grid grid-cols-2 md:grid-cols-4 auto-rows-[200px] gap-4">
             {images.map((image, index) => {
@@ -113,7 +120,7 @@ const Gallery = () => {
                   <img
                     src={getOptimizedUrl(image, 'auto:low')}
                     alt={`Gallery image ${index + 1}`}
-                    className="w-full h-full object-cover transition-tranjakartaorm duration-500 group-hover:scale-110"
+                    className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
                     loading="lazy"
                   />
                   
@@ -124,7 +131,7 @@ const Gallery = () => {
                         e.stopPropagation();
                         downloadImage(image, index);
                       }}
-                      className="bg-white text-black p-3 rounded-full hover:scale-110 transition-tranjakartaorm"
+                      className="bg-white text-black p-3 rounded-full hover:scale-110 transition-transform"
                       aria-label="Download image"
                     >
                       <Download className="w-5 h-5" />
@@ -162,7 +169,7 @@ const Gallery = () => {
               e.stopPropagation();
               downloadImage(selectedImage, images.indexOf(selectedImage));
             }}
-            className="absolute bottom-8 bg-white text-black px-6 py-3 rounded-full hover:scale-105 transition-tranjakartaorm flex items-center gap-2"
+            className="absolute bottom-8 bg-white text-black px-6 py-3 rounded-full hover:scale-105 transition-transform flex items-center gap-2"
           >
             <Download className="w-5 h-5" />
             <span className="font-medium jakarta">Download</span>

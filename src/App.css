@@ -118,11 +118,6 @@ background-color: rgba(26, 9, 0, 0.5);
     text-transform: uppercase;
 }
 
-#bioImg {
-    background-image: url(./assets/images/brad2.jpg);
-    background-position: bottom center;
-    background-size: cover;
-}
 
 /* -------------- ANIMATED BUTTON STYLES ------------------- */
 .animated-button {

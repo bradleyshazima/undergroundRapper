@@ -1,10 +1,22 @@
 import React, { useState, useEffect } from 'react';
 import { useAudio } from '../context/AudioContext';
-import { Play, Pause, Heart, Shuffle, SkipBack, SkipForward, Repeat, Volume2, Mic2, Share2 } from 'lucide-react';
-import { Navbar } from '../components'
-import musicData from '../music-data/index'
-import { Spotify, Apple } from '../assets/images';
+import { Play, Pause, Heart, Shuffle, SkipBack, SkipForward, Repeat, Volume2, Mic2 } from 'lucide-react';
+import { Navbar } from '../components';
+import { supabase } from '../config/supabase';
 
+const fetchItunesCover = async (title, artist) => {
+  try {
+    const query = encodeURIComponent(`${artist} ${title}`);
+    const res = await fetch(`https://itunes.apple.com/search?term=${query}&media=music&limit=1`);
+    const data = await res.json();
+    if (data.results.length > 0) {
+      return data.results[0].artworkUrl100.replace('100x100bb', '600x600bb');
+    }
+  } catch (e) {
+    console.error('iTunes fetch failed:', e);
+  }
+  return null;
+};
 
 const Music = () => {
   const { currentTrack, setCurrentTrack, isPlaying, setIsPlaying, currentTime, setCurrentTime, duration, setDuration, audioRef } = useAudio();
@@ -13,9 +25,49 @@ const Music = () => {
   const [likedSongs, setLikedSongs] = useState([]);
   const [shuffle, setShuffle] = useState(false);
   const [repeat, setRepeat] = useState('all');
-  
 
-  const allTracks = [...musicData.released, ...musicData.unreleased];
+  const [musicData, setMusicData] = useState({ released: [], unreleased: [] });
+
+  // 1. Updated fetch logic for released vs unreleased covers
+  useEffect(() => {
+    const fetchTracks = async () => {
+      const { data, error } = await supabase
+        .from('tracks')
+        .select('*')
+        .order('release_date', { ascending: false });
+
+      if (error) { 
+        console.error('Error fetching tracks:', error); 
+        return; 
+      }
+
+      if (!data) return;
+
+      const releasedTracks = data.filter(t => t.released === true);
+      const unreleasedTracks = data.filter(t => t.released === false);
+
+      // If released, try fetching from iTunes API first, then fallback to stored cover
+      const released = await Promise.all(
+        releasedTracks.map(async (track) => {
+          const itunesCover = await fetchItunesCover(track.title, track.artist);
+          return {
+            ...track,
+            cover: itunesCover || track.cover
+          };
+        })
+      );
+
+      // If unreleased, strictly rely on the stored URL of the cover
+      const unreleased = unreleasedTracks.map(track => ({
+        ...track,
+        cover: track.cover
+      }));
+
+      setMusicData({ released, unreleased });
+    };
+
+    fetchTracks();
+  }, []);
 
   // Set first track as active on mount
   useEffect(() => {
@@ -23,18 +75,7 @@ const Music = () => {
     if (firstTrack && !currentTrack) {
       setCurrentTrack(firstTrack);
     }
-  }, []);
-  
-  useEffect(() => {
-    // When tab switches, check if current track exists in new tab
-    const trackList = selectedTab === 'released' ? musicData.released : musicData.unreleased;
-    const trackExists = trackList.some(t => t.id === currentTrack?.id);
-    
-    if (currentTrack && !trackExists) {
-      // Current track not in this tab, stop highlighting it
-      // but keep it playing
-    }
-  }, [selectedTab]);
+  }, [musicData]);
 
   useEffect(() => {
     if (audioRef.current) {
@@ -46,9 +87,8 @@ const Music = () => {
     const audio = audioRef.current;
     if (!audio || !currentTrack) return;
 
-    // Set the audio source when track changes
-    if (audio.src !== currentTrack.audioUrl) {
-      audio.src = currentTrack.audioUrl;
+    if (audio.src !== currentTrack.audio_url) {
+      audio.src = currentTrack.audio_url;
     }
 
     const updateTime = () => setCurrentTime(audio.currentTime);
@@ -74,21 +114,21 @@ const Music = () => {
   }, [currentTrack, repeat, shuffle, selectedTab]);
 
   const playTrack = (track) => {
-  if (currentTrack?.id === track.id) {
-    togglePlay();
-  } else {
-    if (isPlaying) {
-      audioRef.current?.pause();
+    if (currentTrack?.id === track.id) {
+      togglePlay();
+    } else {
+      if (isPlaying) {
+        audioRef.current?.pause();
+      }
+      setCurrentTrack(track);
+      setCurrentTime(0);
+      setIsPlaying(false);
+      setTimeout(() => {
+        audioRef.current?.play().catch(err => console.log('Play error:', err));
+        setIsPlaying(true);
+      }, 100);
     }
-    setCurrentTrack(track);
-    setCurrentTime(0);
-    setIsPlaying(false);
-    setTimeout(() => {
-      audioRef.current?.play().catch(err => console.log('Play error:', err));
-      setIsPlaying(true);
-    }, 100);
-  }
-};
+  };
 
   const togglePlay = () => {
     if (isPlaying) {
@@ -117,7 +157,6 @@ const Music = () => {
     const secs = Math.floor(seconds % 60);
     return `${mins}:${secs.toString().padStart(2, '0')}`;
   };
-
 
   const toggleLike = (trackId) => {
     setLikedSongs(prev => 
@@ -184,86 +223,116 @@ const Music = () => {
     else setRepeat('off');
   };
 
-const TracksDisplay = ({ tracks, category }) => {
+  // 2. Updated TracksDisplay Component
+  const TracksDisplay = ({ tracks, category }) => {
     const sortedTracks = [...tracks].sort((a, b) => 
-      new Date(b.releaseDate) - new Date(a.releaseDate)
+      new Date(b.release_date) - new Date(a.release_date)
     );
     
     return (
       <div className="grid grid-cols-1 gap-2 h-full xl:h-auto">
-        {sortedTracks.map((track) => (
-          <div
-            key={track.id}
-            className={`flex items-center gap-4 py-4 rounded-lg cursor-pointer transition-colors duration-150 ${
-              currentTrack?.id === track.id && isPlaying ? 'bg-[#d24700]/50' : 'hover:bg-[#d24700]/30'
-            }`}
-            onClick={() => playTrack(track)}
-          >
-            <div className="relative w-12 h-12 lg:w-16 lg:h-16 flex-shrink-0">
-              <img
-                src={track.cover}
-                alt={track.title}
-                className="w-full h-full object-cover rounded border border-white/10"
-              />
-              {currentTrack?.id === track.id && isPlaying ? (
-                <div className="absolute inset-0 flex items-center justify-center bg-black/50 rounded">
-                  <Pause className="w-6 h-6 text-white" />
-                </div>
-              ) : (
-                <div className="absolute inset-0 flex items-center justify-center bg-black/30 opacity-0 hover:opacity-100 transition-opacity rounded">
-                  <Play className="w-6 h-6 text-white" />
-                </div>
-              )}
-            </div>
-            
-            <div className="flex-1 min-w-0">
-              <div className="flex items-center gap-2">
-                <h3 className="text-white jakarta font-medium truncate">{track.title}</h3>
-                {track.explicit && (
-                  <span className="w-4 h-4 flex items-center justify-center bg-gray-600 text-white border border-white/20 font-medium pt-[1px] jakarta text-[10px] rounded">E</span>
-                )}
-              </div>
-              <p className="text-gray-400 jakarta text-sm truncate">{track.artist}</p>
-            </div>
-
-            <div className="flex items-center gap-3">
-              {currentTrack?.id === track.id && (
-                <span className="text-gray-400 jakarta text-sm">{formatTime(duration)}</span>
-              )}
-              <button
-                onClick={(e) => {
-                  e.stopPropagation();
-                  toggleLike(track.id);
-                }}
-                className="hover:scale-110 transition-tranjakartaorm"
-              >
-                <Heart
-                  className={`w-5 h-5 ${
-                    likedSongs.includes(track.id)
-                      ? 'fill-red-500 text-red-500'
-                      : 'text-gray-400'
-                  }`}
+        {sortedTracks.map((track) => {
+          const isCurrent = currentTrack?.id === track.id;
+          return (
+            <div
+              key={track.id}
+              className="group flex items-center gap-4 py-4 px-2 rounded-lg cursor-pointer transition-colors duration-150"
+              onClick={() => playTrack(track)}
+            >
+              <div className="relative w-12 h-12 lg:w-16 lg:h-16 flex-shrink-0">
+                <img
+                  src={track.cover}
+                  alt={track.title}
+                  className="w-full h-full object-cover rounded border border-white/10"
                 />
-              </button>
+                {/* Play button visible on row hover or when active and playing */}
+                <div className={`absolute inset-0 flex items-center justify-center bg-black/40 rounded transition-opacity ${isCurrent && isPlaying ? 'opacity-100' : 'opacity-0 group-hover:opacity-100'}`}>
+                  {isCurrent && isPlaying ? (
+                    <Pause className="w-6 h-6 text-white" />
+                  ) : (
+                    <Play className="w-6 h-6 text-white fill-white" />
+                  )}
+                </div>
+              </div>
+              
+              <div className="flex-1 min-w-0">
+                <div className="flex items-center gap-2">
+                  <h3 className={`jakarta font-medium truncate transition-colors ${isCurrent ? 'text-[#d24700]' : 'text-white group-hover:text-[#d24700]'}`}>
+                    {track.title}
+                  </h3>
+                  {track.explicit && (
+                    <span className="w-4 h-4 flex items-center justify-center bg-gray-600 text-white border border-white/20 font-medium pt-[1px] jakarta text-[10px] rounded">E</span>
+                  )}
+                </div>
+                <p className={`jakarta text-sm truncate transition-colors ${isCurrent ? 'text-[#d24700]' : 'text-gray-400 group-hover:text-[#d24700]'}`}>
+                  {track.artist}
+                </p>
+              </div>
 
-              <button
-                onClick={(e) => {
-                  e.stopPropagation();
-                  navigator.clipboard.writeText(`${window.location.origin}/track/${track.id}`);
-                }}
-                className="hover:scale-110 transition-tranjakartaorm"
-              >
-                <Share2 className="w-5 h-5 text-gray-400" />
-              </button>
+              <div className="flex items-center gap-4">
+                {/* Live orange equalizer bars when song is playing */}
+                {isCurrent && isPlaying ? (
+                  <div className="flex items-end gap-[3px] h-4 w-4" title="Playing">
+                    <span className="w-[3px] bg-[#d24700] h-full animate-[pulse_0.6s_ease-in-out_infinite]"></span>
+                    <span className="w-[3px] bg-[#d24700] h-1/2 animate-[pulse_0.5s_ease-in-out_infinite_0.4s]"></span>
+                    <span className="w-[3px] bg-[#d24700] h-3/4 animate-[pulse_0.8s_ease-in-out_infinite_0.2s]"></span>
+                  </div>
+                ) : (
+                  <span className="text-gray-400 jakarta text-sm"></span>
+                )}
 
-            </div>          
-          </div>
-        ))}
+                {/* Spotify Link Icon */}
+                {track.spotify_link && (
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      window.open(track.spotify_link, '_blank');
+                    }}
+                    className="text-gray-400 hover:text-[#1DB954] hover:scale-110 transition-all"
+                    title="Listen on Spotify"
+                  >
+                    <i class="fa-brands fa-spotify text-xl"></i>
+                  </button>
+                )}
+
+                {/* Apple Music Link Icon */}
+                {track.apple_music_link && (
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      window.open(track.apple_music_link, '_blank');
+                    }}
+                    className="text-gray-400 hover:text-[#fa243c] hover:scale-110 transition-all"
+                    title="Listen on Apple Music"
+                  >
+                    <i class="fa-brands fa-itunes-note text-xl"></i>
+                  </button>
+                )}
+
+                {/* Favorite Button */}
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    toggleLike(track.id);
+                  }}
+                  className="hover:scale-110 transition-transform"
+                >
+                  <Heart
+                    className={`w-5 h-5 ${
+                      likedSongs.includes(track.id)
+                        ? 'fill-[#d24700] text-[#d24700]'
+                        : 'text-gray-400'
+                    }`}
+                  />
+                </button>
+              </div>          
+            </div>
+          );
+        })}
         <div className='w-full h-32'></div>
       </div>
     );
   };
-
 
   return (
     <>
@@ -271,8 +340,7 @@ const TracksDisplay = ({ tracks, category }) => {
       <section 
         className="w-screen h-screen overflow-hidden text-white flex flex-col pt-16 lg:pt-24 abstract-bg relative"
       >
-
-        {/* ── Giant headline block ── */}
+        {/* Giant headline block */}
         <div className="pb-2 bg-transparent backdrop-blur-[2px] flex lg:flex-col px-4 md:px-24 lg:px-32 justify-between">
           <div
             className="jakarta text-4xl md:text-6xl font-black uppercase leading-none tracking-tight select-none bg-clip-text text-transparent"
@@ -326,8 +394,7 @@ const TracksDisplay = ({ tracks, category }) => {
           </div>
         </div>
 
-        {/* Player Controls (Glassmorphism Effect) */}
-        {/* This remains exactly the same */}
+        {/* Player Controls */}
         {currentTrack && (
           <div className="fixed bottom-8 left-1/2 -translate-x-1/2 bg-[#311100]/50 backdrop-blur-xl border border-white/10 py-4 px-6 lg:px-16 flex w-[90%] md:w-4/5 lg:gap-8 items-center z-[999] rounded-2xl shadow-[0_8px_32px_rgba(0,0,0,0.5)]">
             <div className="flex items-center gap-4 overflow-hidden w-full md:w-fit md:max-w-80">

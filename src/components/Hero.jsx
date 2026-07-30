@@ -1,43 +1,12 @@
 import React, { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAudio } from "../context/AudioContext";
-import musicData from "../music-data/index";
 import { Play, Pause } from "lucide-react";
 import CircularText from "./CircularText";
 
 const Hero = () => {
   const navigate = useNavigate();
   const { currentTrack, setCurrentTrack, isPlaying, setIsPlaying, audioRef } = useAudio();
-
-  // Get latest song (most recent release date)
-  const latestSong = [...musicData.released].sort(
-    (a, b) => new Date(b.releaseDate) - new Date(a.releaseDate)
-  )[0];
-
-  const handlePlayPause = (e) => {
-    e.stopPropagation();
-    
-    if (!currentTrack || currentTrack.id !== latestSong.id) {
-      setCurrentTrack(latestSong);
-      setTimeout(() => {
-        audioRef.current.src = latestSong.audioUrl;
-        audioRef.current.play().catch(err => console.log('Play error:', err));
-        setIsPlaying(true);
-      }, 100);
-    } else {
-      if (isPlaying) {
-        audioRef.current.pause();
-        setIsPlaying(false);
-      } else {
-        audioRef.current.play().catch(err => console.log('Play error:', err));
-        setIsPlaying(true);
-      }
-    }
-  };
-
-  const handleNavigateToMusic = () => {
-    navigate('/music');
-  };
 
   return (
     <section
@@ -88,7 +57,7 @@ const Hero = () => {
         className="absolute flex flex-col items-center bottom-8 right-1/2 translate-x-1/2"
       >
         <div className="flex items-center justify-center border-2 border-white/70 rounded-lg w-6 h-10 cursor-pointer transition-all duration-300">
-          <i class="fa-solid fa-arrow-down up-down text-white text-sm"></i>
+          <i className="fa-solid fa-arrow-down up-down text-white text-sm"></i>
         </div>
         <p className="text-white text-sm mt-2 jakarta">Scroll to Bio</p>
       </div>

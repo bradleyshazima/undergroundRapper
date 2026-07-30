@@ -1,5 +1,4 @@
 import React from 'react'
-import { DonDada } from '../assets/images/posters'
 import { Navbar } from '../components'
 
 const Shows = () => {

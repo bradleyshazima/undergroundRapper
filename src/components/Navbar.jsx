@@ -37,7 +37,6 @@ const Navbar = () => {
               <Link
                 className="nav-link jakarta font-semibold text-xl md:text-lg sm:text-base cursor-pointer"
                 to="/"
-                smooth={true}
                 duration={500}
               >
                 HOME
@@ -73,7 +72,6 @@ const Navbar = () => {
               <Link
                 className="nav-link jakarta font-semibold text-xl md:text-lg sm:text-base cursor-pointer"
                 to="/shows&tours"
-                smooth={true}
                 duration={500}
               >
                 SHOWS
@@ -83,7 +81,6 @@ const Navbar = () => {
               <Link
                 className="nav-link jakarta font-semibold text-xl md:text-lg sm:text-base cursor-pointer"
                 to="/shop"
-                smooth={true}
                 duration={500}
               >
                 SHOP
@@ -123,7 +120,6 @@ const Navbar = () => {
             <Link
               className="text-white text-4xl cursor-pointer jakarta font-semibold nav-link"
               to="/"
-              smooth={true}
               duration={500}
               onClick={toggleMenu}
             >
@@ -149,7 +145,6 @@ const Navbar = () => {
             <Link
               className="text-white text-4xl cursor-pointer jakarta font-semibold nav-link"
               to="/shows&tours"
-              smooth={true}
               duration={500}
               onClick={toggleMenu}
             >
@@ -160,7 +155,6 @@ const Navbar = () => {
             <Link
               className="text-white text-4xl cursor-pointer jakarta font-semibold nav-link"
               to="/shop"
-              smooth={true}
               duration={500}
               onClick={toggleMenu}
             >
