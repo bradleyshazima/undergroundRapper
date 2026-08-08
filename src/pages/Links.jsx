@@ -1,5 +1,8 @@
 import React, { useState } from 'react';
-import { Music, Video, ShoppingBag, Calendar, Mail, Instagram, Twitter, Youtube } from 'lucide-react';
+import { Music, Video, ShoppingBag, Calendar, Mail, Instagram, Twitter, Youtube, } from 'lucide-react';
+import { FaTiktok, FaSpotify } from "react-icons/fa";
+import { FaXTwitter } from "react-icons/fa6";
+import { IoGlobeOutline } from "react-icons/io5";
 
 const Links = () => {
   const [email, setEmail] = useState('');
@@ -7,41 +10,44 @@ const Links = () => {
   const links = [
     {
       id: 1,
-      title: "Latest Release",
-      subtitle: "Leo Ama Kesho",
-      icon: Music,
-      href: "https://open.spotify.com/track/your-track-id",
+      title: "YOUTUBE",
+      subtitle: "Subscribe to my channel",
+      icon: Youtube,
+      href: "https://www.youtube.com/@acens.e?sub_confirmation=1",
       size: "large",
-      color: "from-red-900 to-red-700"
+      color: "from-red-900 to-red-700",
     },
     {
       id: 2,
-      title: "Music Videos",
-      icon: Video,
-      href: "/videos",
-      size: "medium",
-      color: "from-purple-900 to-purple-700"
+      title: "Spotify",
+      subtitle: "Follow on Spotify",
+      icon: FaSpotify,
+      href: "https://open.spotify.com/artist/7c2Bm7qKetW9SousKvrQ6y",
+      size: "large",
+      color: "from-green-900 to-green-700",
     },
     {
       id: 3,
       title: "Merch Store",
+      subtitle: "Get your exclusive merchandise!",
       icon: ShoppingBag,
-      href: "/merch",
-      size: "medium",
-      color: "from-green-900 to-green-700"
+      href: "https://underground-dept.xyz",
+      size: "large",
+      color: "from-slate-900 to-slate-700"
     },
     {
-      id: 4,
-      title: "Book a Show",
+      id: 5,
+      title: "Bookings & Collaborations",
+      subtitle: "Contact management for bookings and collaborations.",
       icon: Calendar,
       href: "mailto:itsacense@gmail.com",
       size: "medium",
       color: "from-blue-900 to-blue-700"
     },
     {
-      id: 5,
+      id: 6,
       title: "Newsletter",
-      subtitle: "Join 300+ fans",
+      subtitle: "Join 300+ fans for exclusive content and updates.",
       icon: Mail,
       href: "#newsletter",
       size: "medium",
@@ -50,23 +56,24 @@ const Links = () => {
   ];
 
   const socialLinks = [
-    { name: 'Instagram', icon: Instagram, href: 'https://instagram.com/acense', color: 'hover:text-pink-500' },
-    { name: 'Twitter', icon: Twitter, href: 'https://twitter.com/acense', color: 'hover:text-blue-400' },
-    { name: 'YouTube', icon: Youtube, href: 'https://youtube.com/@acense', color: 'hover:text-red-500' },
-    { name: 'TikTok', icon: Music, href: 'https://tiktok.com/@acense', color: 'hover:text-cyan-400' },
+    { name: 'Instagram', icon: Instagram, href: 'https://instagram.com/acens.e', color: 'hover:text-pink-500' },
+    { name: 'Twitter', icon: FaXTwitter, href: 'https://x.com/acense135', color: 'hover:text-blue-400' },
+    { name: 'YouTube', icon: Youtube, href: 'https://www.youtube.com/@acens.e', color: 'hover:text-red-500' },
+    { name: 'TikTok', icon: FaTiktok, href: 'https://tiktok.com/@acens.e', color: 'hover:text-cyan-400' },
+    { name: 'Website', icon: IoGlobeOutline, href: 'https://acense.xyz', color: 'hover:text-indigo-500' }
   ];
 
   const streamingLinks = [
-    { name: 'Spotify', logo: 'https://storage.googleapis.com/pr-newsroom-wp/1/2018/11/Spotify_Logo_RGB_White.png', href: 'https://open.spotify.com/artist/your-id' },
-    { name: 'Apple Music', logo: 'https://www.apple.com/v/apple-music/r/images/overview/icons/apple-music-logo__dmnfla45owae_large.png', href: 'https://music.apple.com/artist/your-id' },
+    { name: 'Spotify', logo: 'https://storage.googleapis.com/pr-newsroom-wp/1/2018/11/Spotify_Logo_RGB_White.png', href: 'https://open.spotify.com/artist/7c2Bm7qKetW9SousKvrQ6y' },
+    { name: 'Apple Music', logo: 'https://res.cloudinary.com/bradley-cdn/image/upload/v1786191059/apple-music-logo-svgrepo-com_hfgudb.svg', href: 'https://music.apple.com/us/artist/acense/1623561571' },
   ];
 
   const getSizeClass = (size) => {
     switch(size) {
       case 'large':
-        return 'col-span-2 row-span-2';
+        return 'col-span-2 row-span-1';
       case 'medium':
-        return 'col-span-1 row-span-1';
+        return 'col-span-1 row-span-2';
       case 'wide':
         return 'col-span-2 row-span-1';
       default:
@@ -94,21 +101,40 @@ const Links = () => {
   };
 
   return (
-    <div className="min-h-screen bg-[#0a0a0a] text-white py-8 md:py-12 px-4">
+    <div className="min-h-screen bg-[#0a0a0a] text-white">
       <div className="max-w-4xl mx-auto">
         {/* Header */}
-        <div className="text-center mb-8 md:mb-12">
+        <div className="text-center mb-8 md:mb-12 bg-slate-500 h-[50vh] relative flex flex-col items-center overflow-hidden">
           <img 
-            src="https://res.cloudinary.com/bradley-cdn/image/upload/q_auto/f_auto/v1765007436/brad2_ao3pac.jpg"
+            src="https://res.cloudinary.com/bradley-cdn/image/upload/q_auto/f_auto/v1786186880/IMG_5035_1_tbeyn2.jpg"
             alt="Acense"
-            className="w-24 h-24 md:w-32 md:h-32 rounded-full mx-auto mb-4 border-4 border-red-700 object-cover"
+            className="w-full h-full  mx-auto mb-4 object-cover scale-125"
           />
-          <h1 className="deutsch text-4xl md:text-6xl mb-2">ACENSE</h1>
-          <p className="jakarta text-sm md:text-base text-gray-400">The Underground Rapper</p>
+          <div className='absolute z-40 bottom-0 left-0 w-full h-1/3 flex flex-col items-start px-8'>
+            <h1 className="jakarta font-bold text-4xl md:text-6xl mb-2 ">ACENSE</h1>
+            <p className="jakarta text-sm md:text-base text-gray-400">&#x1F1F0;&#x1F1EA; Rapper | Performing Artist | Songwriter</p>
+              {/* Social Links */}
+              <div className="flex justify-center gap-4 md:gap-6 my-4 ">
+                {socialLinks.map((social) => {
+                  const Icon = social.icon;
+                  return (
+                    <div
+                      key={social.name}
+                      onClick={() => window.open(social.href, '_blank')}
+                      className={`w-12 h-12 md:w-14 md:h-14 bg-white/10 backdrop-blur-sm rounded-full flex items-center justify-center border border-white/10 ${social.color} transition-all hover:scale-110 cursor-pointer`}
+                    >
+                      <Icon className="w-5 h-5 md:w-6 md:h-6" />
+                    </div>
+                  );
+                })}
+              </div>
+          </div>
+
+          <div className='w-full absolute z-20 bg-gradient-to-b from-[#0a0a0a]/0 via-[#0a0a0a]/50 via-30% to-[#0a0a0a] flex h-1/2 bottom-0'></div>
         </div>
 
         {/* Bento Grid */}
-        <div className="grid grid-cols-2 md:grid-cols-2 gap-3 md:gap-4 mb-8 auto-rows-[140px] md:auto-rows-[180px]">
+        <div className="grid grid-cols-2 md:grid-cols-2 gap-3 md:gap-4 mb-8 auto-rows-[80px] md:auto-rows-[100px] px-3">
           {links.map((link) => {
             const Icon = link.icon;
             
@@ -116,11 +142,13 @@ const Links = () => {
               <div
                 key={link.id}
                 onClick={() => handleLinkClick(link.href)}
-                className={`${getSizeClass(link.size)} bg-gradient-to-br ${link.color} rounded-2xl p-4 md:p-6 flex flex-col justify-between hover:scale-[1.02] transition-all group cursor-pointer border border-white/10`}
+                className={`${getSizeClass(link.size)} bg-gradient-to-br ${link.color} rounded-2xl p-4 md:p-6 flex flex-col justify-between hover:scale-[1.02] transition-all group cursor-pointer border-[1.4px] border-white/10 overflow-hidden`}
               >
-                <Icon className="w-6 h-6 md:w-8 md:h-8 group-hover:scale-110 transition-tranjakartaorm" />
+                <div className='flex items-center w-full gap-2'>
+                  <Icon className="min-w-6 min-h-6 md:w-8 md:h-8 group-hover:scale-110 transition-tranjakartaorm" />
+                  <h3 className="bebas text-xl md:text-2xl mb-1 leading-none mt-1">{link.title}</h3>
+                </div>
                 <div>
-                  <h3 className="bebas text-lg md:text-2xl mb-1">{link.title}</h3>
                   {link.subtitle && (
                     <p className="jakarta text-xs md:text-sm text-white/70">{link.subtitle}</p>
                   )}
@@ -131,43 +159,29 @@ const Links = () => {
         </div>
 
         {/* Streaming Platforms */}
-        <div className="mb-8">
+        <div className="mb-8 px-3">
           <h3 className="bebas text-xl md:text-2xl mb-4 text-center text-gray-400">Stream Everywhere</h3>
           <div className="grid grid-cols-2 gap-3 md:gap-4">
             {streamingLinks.map((platform) => (
               <div
                 key={platform.name}
                 onClick={() => window.open(platform.href, '_blank')}
-                className="bg-white/5 rounded-xl p-4 md:p-6 flex items-center justify-center hover:bg-white/10 transition-all border border-white/10 group cursor-pointer"
+                className="bg-white/5 rounded-xl p-4 md:p-6 flex items-center justify-center hover:bg-white/10 transition-all border border-white/10 group cursor-pointer h-16"
               >
                 <img 
                   src={platform.logo} 
                   alt={platform.name}
-                  className="h-6 md:h-8 group-hover:scale-110 transition-tranjakartaorm"
+                  className="w-20 md:w-10 md:h-10 group-hover:scale-110 transition-transform"
                 />
               </div>
             ))}
           </div>
         </div>
 
-        {/* Social Links */}
-        <div className="flex justify-center gap-4 md:gap-6 mb-8">
-          {socialLinks.map((social) => {
-            const Icon = social.icon;
-            return (
-              <div
-                key={social.name}
-                onClick={() => window.open(social.href, '_blank')}
-                className={`w-12 h-12 md:w-14 md:h-14 bg-white/5 rounded-full flex items-center justify-center border border-white/10 ${social.color} transition-all hover:scale-110 cursor-pointer`}
-              >
-                <Icon className="w-5 h-5 md:w-6 md:h-6" />
-              </div>
-            );
-          })}
-        </div>
+
 
         {/* Newsletter Signup */}
-        <div className="bg-gradient-to-br from-red-900/20 to-red-700/20 rounded-2xl p-6 md:p-8 border border-red-700/30">
+        <div className="bg-gradient-to-br from-orange-900/20 to-orange-700/20 rounded-2xl p-6 md:p-8 border border-orange-700/30 mx-3">
           <h3 className="bebas text-2xl md:text-3xl mb-2 text-center">Join the Inner Circle</h3>
           <p className="jakarta text-xs md:text-sm text-gray-300 text-center mb-4 md:mb-6">
             Get exclusive unreleased tracks, early access to merch, and behind-the-scenes content
@@ -178,11 +192,11 @@ const Links = () => {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               placeholder="Enter your email"
-              className="flex-1 px-4 py-3 rounded-lg bg-white/10 border border-white/20 focus:border-red-700 focus:outline-none jakarta text-sm md:text-base"
+              className="flex-1 px-4 py-3 rounded-lg bg-white/10 border border-white/20 focus:border-orange-700 focus:outline-none jakarta text-sm md:text-base"
             />
             <button
               onClick={handleNewsletterSubmit}
-              className="px-6 py-3 bg-red-700 hover:bg-red-800 rounded-lg transition-all bebas text-base md:text-lg whitespace-nowrap"
+              className="px-6 py-3 bg-orange-700 hover:bg-orange-800 rounded-lg transition-all bebas text-base md:text-lg whitespace-nowrap"
             >
               Subscribe
             </button>
@@ -193,9 +207,9 @@ const Links = () => {
         </div>
 
         {/* Footer */}
-        <div className="text-center mt-8 md:mt-12">
+        <div className="text-center my-8 md:mt-12">
           <p className="jakarta text-xs md:text-sm text-gray-500">
-            © 2026 Acense. Underground Rapper Label.
+            © 2026 Acense. Underground District Records.
           </p>
         </div>
       </div>
