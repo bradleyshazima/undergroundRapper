@@ -28,15 +28,15 @@ const Home = () => {
             <div className='w-full lg:w-1/3 flex flex-col'>
               <ul className='w-full flex flex-col md:flex-row lg:flex-col md:justify-between gap-4'>
                 <li className='flex flex-col py-1 lg:py-10'>
-                  <span className='text-4xl lg:text-7xl font-black text-white jakarta'>9,200+</span>
+                  <span className='text-4xl lg:text-7xl font-black text-white jakarta'>10k+</span>
                   <p className='text-white jakarta text-2xl font-medium w-full'>Instagram Followers</p>
                 </li>
                 <li className='flex flex-col py-1 lg:py-10'>
-                  <span className='text-4xl lg:text-7xl font-black text-white jakarta'>2,300+</span>
+                  <span className='text-4xl lg:text-7xl font-black text-white jakarta'>2,900+</span>
                   <p className='text-white jakarta text-2xl font-medium'>Tiktok Followers</p>
                 </li>
                 <li className='flex flex-col py-1 lg:py-10'>
-                  <span className='text-4xl lg:text-7xl font-black text-white jakarta'>2,200+</span>
+                  <span className='text-4xl lg:text-7xl font-black text-white jakarta'>2,700+</span>
                   <p className='text-white jakarta text-2xl font-medium'>Youtube Subscribers</p>
                 </li>
               </ul>

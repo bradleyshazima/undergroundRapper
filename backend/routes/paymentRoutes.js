@@ -1,20 +1,10 @@
 import express from 'express';
 import axios from 'axios';
-import nodemailer from 'nodemailer';
 import { supabase } from '../config/supabase.js';
+import { sendOrderConfirmation } from '../services/emailService.js';
 
 const router = express.Router();
 
-// ── Nodemailer Transporter ──
-const transporter = nodemailer.createTransport({
-  host: process.env.EMAIL_HOST,
-  port: process.env.EMAIL_PORT,
-  secure: true,
-  auth: {
-    user: process.env.EMAIL_USER,
-    pass: process.env.EMAIL_PASS,
-  },
-});
 
 // ── Verify Payment & Send Email ──
 router.post('/verify-payment', async (req, res) => {
@@ -22,29 +12,41 @@ router.post('/verify-payment', async (req, res) => {
 
 // ── Step 1: Verify with Paystack (hard fail if this fails) ──
   let paystackData;
-  try {
-    const paystackRes = await axios.get(
-      `https://api.paystack.co/transaction/verify/${reference}`,
-      { headers: { Authorization: `Bearer ${process.env.PAYSTACK_SECRET_KEY}` } }
-    );
-    paystackData = paystackRes.data;
-  } catch (err) {
-    console.error('❌ Paystack API error:', err.message);
+  let lastErr;
+  for (let attempt = 1; attempt <= 3; attempt++) {
+    try {
+      console.log(`🔄 [PAYSTACK] Verification attempt ${attempt}/3 for reference: ${reference}`);
+      const paystackRes = await axios.get(
+        `https://api.paystack.co/transaction/verify/${reference}`,
+        {
+          headers: { Authorization: `Bearer ${process.env.PAYSTACK_SECRET_KEY}` },
+          timeout: 10000, // 10 second timeout per attempt
+        }
+      );
+      paystackData = paystackRes.data;
+      console.log(`✅ [PAYSTACK] Got response on attempt ${attempt}`);
+      break; // success, stop retrying
+    } catch (err) {
+      lastErr = err;
+      console.error(`❌ [PAYSTACK] Attempt ${attempt} failed: ${err.message}`);
+      if (attempt < 3) await new Promise(r => setTimeout(r, 1500 * attempt)); // wait 1.5s, then 3s
+    }
+  }
+
+  if (!paystackData) {
+    console.error('❌ [PAYSTACK] All 3 attempts failed. Last error:', lastErr?.message);
     return res.status(502).json({ success: false, message: 'Could not reach Paystack to verify payment.' });
   }
 
-  if (!paystackData.status || paystackData.data.status !== 'success') {
-    console.warn('⚠️ Paystack says payment not successful:', paystackData.data?.status);
+  console.log('📦 [PAYSTACK] Raw response status:', paystackData.data?.status);
+
+  if (!paystackData.status || paystackData.data?.status !== 'success') {
+    console.warn('⚠️ [PAYSTACK] Payment not successful:', paystackData.data?.status);
     return res.status(400).json({ success: false, message: 'Payment not confirmed by Paystack.' });
   }
 
-  const paidAmount = paystackData.data.amount / 100;
-  if (paidAmount < product.price) {
-    console.warn(`⚠️ Amount mismatch: paid ${paidAmount}, expected ${product.price}`);
-    return res.status(400).json({ success: false, message: 'Payment amount does not match product price.' });
-  }
-
-  // ── Step 2: Save order to Supabase (hard fail — must record the sale) ──
+  console.log('✅ [PAYSTACK] Payment confirmed as successful');
+  // ── Step 2: Save order to Supabase ──
   try {
     const { error: dbError } = await supabase.from('orders').insert([{
       email,
@@ -61,51 +63,14 @@ router.post('/verify-payment', async (req, res) => {
     console.error('❌ Supabase order save failed:', err.message);
     return res.status(500).json({ success: false, message: 'Payment received but order could not be recorded. Contact support with reference: ' + reference });
   }
-
-  // ── Step 3: Send email (soft fail — don't block success if email breaks) ──
-  let emailSent = true;
-  try {
-    let emailSubject = `Order Confirmation: ${product.title}`;
-    let emailHtml = `
-      <div style="font-family: Arial, sans-serif; background: #0a0a0a; color: #ffffff; padding: 20px;">
-        <h2 style="color: #d24700;">THANK YOU FOR YOUR ORDER!</h2>
-        <p>Your payment for <strong>${product.title}</strong> (KES ${product.price}) was successful.</p>
-        <p><strong>Transaction Reference:</strong> ${reference}</p>
-        <hr style="border-color: #333;" />
-    `;
-
-    if (product.type === 'digital') {
-      emailHtml += `
-        <h3>Digital Download Instructions</h3>
-        <p>You can access your digital download vault directly anytime using your email at our store.</p>
-        <p><a href="${process.env.FRONTEND_URL}/download" style="background: #d24700; color: #fff; padding: 10px 20px; text-decoration: none; font-weight: bold;">ACCESS DIGITAL VAULT</a></p>
-      `;
-    } else {
-      emailHtml += `
-        <h3>Delivery Details</h3>
-        <p><strong>County:</strong> ${shippingDetails?.county}</p>
-        <p><strong>Constituency:</strong> ${shippingDetails?.constituency}</p>
-        <p><strong>Street:</strong> ${shippingDetails?.street}</p>
-        <p><strong>Estate:</strong> ${shippingDetails?.estate}</p>
-        <p><strong>Landmark:</strong> ${shippingDetails?.description}</p>
-        <p style="margin-top: 15px;">Your item will be packaged and delivered within 3 working days.</p>
-      `;
-    }
-    emailHtml += `<hr style="border-color: #333;" /><p style="font-size: 12px; color: #888;">Questions? Contact itsacense@gmail.com</p></div>`;
-
-    await transporter.sendMail({
-      from: `"Acense Store" <${process.env.EMAIL_USER}>`,
-      to: email,
-      subject: emailSubject,
-      html: emailHtml,
-    });
-    console.log(`📧 Confirmation email sent to ${email}`);
-  } catch (err) {
-    // Email failed but order IS saved — just log it, don't fail the response
-    emailSent = false;
-    console.error('⚠️ Email send failed (order still saved):', err.message);
-  }
-
+// ── Step 3: Send email (soft fail — order is already saved) ──
+let emailSent = true;
+try {
+  await sendOrderConfirmation({ email, product, reference, shippingDetails });
+} catch (err) {
+  emailSent = false;
+  console.error('⚠️  [EMAIL] Send failed (order still saved):', err.message);
+}
   return res.status(200).json({
     success: true,
     message: emailSent

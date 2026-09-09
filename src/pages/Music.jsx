@@ -291,7 +291,7 @@ const Music = () => {
                     className="text-gray-400 hover:text-[#1DB954] hover:scale-110 transition-all"
                     title="Listen on Spotify"
                   >
-                    <i class="fa-brands fa-spotify text-xl"></i>
+                    <i className="fa-brands fa-spotify text-xl"></i>
                   </button>
                 )}
 
@@ -305,7 +305,7 @@ const Music = () => {
                     className="text-gray-400 hover:text-[#fa243c] hover:scale-110 transition-all"
                     title="Listen on Apple Music"
                   >
-                    <i class="fa-brands fa-itunes-note text-xl"></i>
+                    <i className="fa-brands fa-itunes-note text-xl"></i>
                   </button>
                 )}
 

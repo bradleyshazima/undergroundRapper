@@ -11,7 +11,7 @@ const app = express();
 const allowedOrigins = [
   'http://localhost:5173',
   'http://127.0.0.1:5173',
-  'http://192.168.88.13:5173',
+  'http://192.168.88.253:5173',
   process.env.FRONTEND_URL,
 ].filter(Boolean); // Filter out any undefined values
 
