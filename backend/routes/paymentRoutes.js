@@ -85,41 +85,186 @@ router.post('/get-files', async (req, res) => {
   if (!email) return res.status(400).json({ success: false, message: 'Email required' });
 
   try {
-    // Find most recent successful order for this email
-    const { data: order, error: orderError } = await supabase
+    // All successful orders for this email, latest first
+    const { data: orders, error: ordersError } = await supabase
       .from('orders')
-      .select('product_id, product_title')
+      .select('id, product_id, product_title, created_at')
       .eq('email', email)
       .eq('status', 'success')
-      .order('created_at', { ascending: false })
-      .limit(1)
-      .single();
+      .order('created_at', { ascending: false });
 
-    if (orderError || !order) {
-      return res.status(404).json({ success: false, message: 'No successful order found for this email.' });
+    if (ordersError) throw ordersError;
+    if (!orders || orders.length === 0) {
+      return res.status(404).json({ success: false, message: 'No purchases found for this email.' });
     }
 
-    const { data: allFiles, error: filesError } = await supabase
-      .from('digital_files')
-      .select('*')
-      .eq('product_id', order.product_id)
-      .order('track_number', { ascending: true });
+    const enrichedOrders = await Promise.all(
+      orders.map(async (order) => {
+        // Check product type — skip physical orders
+        const { data: product } = await supabase
+          .from('products')
+          .select('type, file_url')
+          .eq('id', order.product_id)
+          .single();
 
-    if (filesError) throw filesError;
+        if (product?.type !== 'digital') return null;
 
-    const zip = allFiles?.find(f => f.type === 'zip');
-    const files = allFiles?.filter(f => f.type !== 'zip') || [];
+        // Get digital files — deliberately exclude file_url from select
+        const { data: allFiles } = await supabase
+          .from('digital_files')
+          .select('id, name, size, type, track_number')
+          .eq('product_id', order.product_id)
+          .order('track_number', { ascending: true });
 
-    return res.status(200).json({
-      success: true,
-      product: { id: order.product_id, title: order.product_title },
-      zipUrl: zip?.file_url || null,
-      files,
-    });
+        const zip = allFiles?.find(f => f.type === 'zip') || null;
+        const tracks = allFiles?.filter(f => f.type !== 'zip') || [];
+
+        // Build file keys for download log lookup
+        const isStandaloneSingle = product?.file_url && tracks.length === 0;
+        const fileKeys = [
+          ...tracks.map(t => `track:${t.id}`),
+          ...(zip ? [`zip:${zip.id}`] : []),
+          ...(isStandaloneSingle ? [`product:${order.product_id}`] : []),
+        ];
+
+        // Get download counts (batch)
+        const { data: logs } = fileKeys.length > 0
+          ? await supabase
+              .from('download_logs')
+              .select('file_key, download_count')
+              .eq('email', email)
+              .in('file_key', fileKeys)
+          : { data: [] };
+
+        const countMap = {};
+        logs?.forEach(l => { countMap[l.file_key] = l.download_count; });
+
+        return {
+          order_id: order.id,
+          product_id: order.product_id,
+          product_title: order.product_title,
+          created_at: order.created_at,
+          files: tracks.map(t => ({
+            id: t.id,
+            name: t.name,
+            size: t.size,
+            track_number: t.track_number,
+            file_key: `track:${t.id}`,
+            downloads_remaining: Math.max(0, 2 - (countMap[`track:${t.id}`] || 0)),
+          })),
+          zip: zip ? {
+            id: zip.id,
+            name: zip.name,
+            file_key: `zip:${zip.id}`,
+            downloads_remaining: Math.max(0, 2 - (countMap[`zip:${zip.id}`] || 0)),
+          } : null,
+          single: isStandaloneSingle ? {
+            file_key: `product:${order.product_id}`,
+            downloads_remaining: Math.max(0, 2 - (countMap[`product:${order.product_id}`] || 0)),
+          } : null,
+        };
+      })
+    );
+
+    const digitalOrders = enrichedOrders.filter(Boolean);
+    if (digitalOrders.length === 0) {
+      return res.status(404).json({ success: false, message: 'No digital purchases found for this email.' });
+    }
+
+    console.log(`📂 [VAULT] ${email} fetched ${digitalOrders.length} order(s)`);
+    return res.status(200).json({ success: true, orders: digitalOrders });
   } catch (err) {
     console.error('Get files error:', err.message);
     return res.status(500).json({ success: false, message: 'Server error' });
   }
 });
+
+
+// ── Gated Download Request (validates + counts + returns URL) ──
+router.post('/request-download', async (req, res) => {
+  const { email, file_key, order_id } = req.body;
+  if (!email || !file_key || !order_id) {
+    return res.status(400).json({ success: false, message: 'Missing required fields.' });
+  }
+
+  try {
+    // 1. Confirm order belongs to this email
+    const { data: order, error: orderError } = await supabase
+      .from('orders')
+      .select('id, product_id')
+      .eq('id', order_id)
+      .eq('email', email)
+      .eq('status', 'success')
+      .single();
+
+    if (orderError || !order) {
+      console.warn(`⛔ [DOWNLOAD] Unauthorized: ${email} → order ${order_id}`);
+      return res.status(403).json({ success: false, message: 'No valid order found for this email.' });
+    }
+
+    // 2. Check download count
+    const { data: log } = await supabase
+      .from('download_logs')
+      .select('download_count')
+      .eq('email', email)
+      .eq('file_key', file_key)
+      .maybeSingle();
+
+    const currentCount = log?.download_count || 0;
+    if (currentCount >= 2) {
+      console.warn(`🚫 [DOWNLOAD] Limit hit: ${email} → ${file_key}`);
+      return res.status(403).json({ success: false, message: 'Download limit reached (max 2 per file).' });
+    }
+
+    // 3. Resolve file URL — also verifies file belongs to this order's product
+    let fileUrl = null;
+    const [type, rawId] = file_key.split(':');
+    const id = parseInt(rawId);
+
+    if (type === 'track' || type === 'zip') {
+      const { data: file } = await supabase
+        .from('digital_files')
+        .select('file_url, product_id')
+        .eq('id', id)
+        .single();
+
+      if (file?.product_id !== order.product_id) {
+        return res.status(403).json({ success: false, message: 'File does not belong to this order.' });
+      }
+      fileUrl = file?.file_url;
+    } else if (type === 'product') {
+      if (id !== order.product_id) {
+        return res.status(403).json({ success: false, message: 'File does not belong to this order.' });
+      }
+      const { data: product } = await supabase
+        .from('products')
+        .select('file_url')
+        .eq('id', id)
+        .single();
+      fileUrl = product?.file_url;
+    }
+
+    if (!fileUrl) {
+      return res.status(404).json({ success: false, message: 'File not found.' });
+    }
+
+    // 4. Upsert download count
+    await supabase
+      .from('download_logs')
+      .upsert(
+        { email, file_key, download_count: currentCount + 1, last_downloaded_at: new Date().toISOString() },
+        { onConflict: 'email,file_key' }
+      );
+
+    const remaining = 2 - (currentCount + 1);
+    console.log(`📥 [DOWNLOAD] ${email} | ${file_key} | ${currentCount + 1}/2 used | ${remaining} remaining`);
+
+    return res.status(200).json({ success: true, url: fileUrl, downloads_remaining: remaining });
+  } catch (err) {
+    console.error('Download request error:', err.message);
+    return res.status(500).json({ success: false, message: 'Server error.' });
+  }
+});
+
 
 export default router;
