@@ -171,12 +171,8 @@ router.post('/get-files', async (req, res) => {
       return res.status(404).json({ success: false, message: 'No digital purchases found for this email.' });
     }
 
-    console.log(`📂 [VAULT] ${email} fetched ${digitalOrders.length} order(s)`);
-    const downloadUrl = fileUrl.includes('cloudinary.com')
-      ? fileUrl.replace('/upload/', '/upload/fl_attachment/')
-      : fileUrl;
-
-    return res.status(200).json({ success: true, url: downloadUrl, downloads_remaining: remaining });
+  console.log(`📂 [VAULT] ${email} fetched ${digitalOrders.length} order(s)`);
+  return res.status(200).json({ success: true, orders: digitalOrders });
   } catch (err) {
     console.error('Get files error:', err.message);
     return res.status(500).json({ success: false, message: 'Server error' });
