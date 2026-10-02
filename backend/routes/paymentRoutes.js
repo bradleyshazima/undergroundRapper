@@ -172,7 +172,11 @@ router.post('/get-files', async (req, res) => {
     }
 
     console.log(`📂 [VAULT] ${email} fetched ${digitalOrders.length} order(s)`);
-    return res.status(200).json({ success: true, orders: digitalOrders });
+    const downloadUrl = fileUrl.includes('cloudinary.com')
+      ? fileUrl.replace('/upload/', '/upload/fl_attachment/')
+      : fileUrl;
+
+    return res.status(200).json({ success: true, url: downloadUrl, downloads_remaining: remaining });
   } catch (err) {
     console.error('Get files error:', err.message);
     return res.status(500).json({ success: false, message: 'Server error' });
@@ -259,10 +263,40 @@ router.post('/request-download', async (req, res) => {
     const remaining = 2 - (currentCount + 1);
     console.log(`📥 [DOWNLOAD] ${email} | ${file_key} | ${currentCount + 1}/2 used | ${remaining} remaining`);
 
-    return res.status(200).json({ success: true, url: fileUrl, downloads_remaining: remaining });
+    const downloadUrl = fileUrl.replace('/upload/', '/upload/fl_attachment/');
+    return res.status(200).json({ success: true, url: downloadUrl, downloads_remaining: remaining });
   } catch (err) {
     console.error('Download request error:', err.message);
     return res.status(500).json({ success: false, message: 'Server error.' });
+  }
+});
+
+
+// ADD this new route:
+router.get('/proxy-download', async (req, res) => {
+  const { url, name } = req.query;
+  if (!url) return res.status(400).send('URL required');
+
+  const decodedUrl = decodeURIComponent(url);
+
+  // Safety check — only proxy Cloudinary URLs
+  if (!decodedUrl.includes('cloudinary.com')) {
+    return res.status(400).send('Invalid source URL');
+  }
+
+  try {
+    const fileRes = await fetch(decodedUrl);
+    if (!fileRes.ok) throw new Error(`Cloudinary returned ${fileRes.status}`);
+
+    const contentType = fileRes.headers.get('content-type') || 'application/octet-stream';
+    res.setHeader('Content-Type', contentType);
+    res.setHeader('Content-Disposition', `attachment; filename="${decodeURIComponent(name || 'download')}"`);
+
+    const buffer = await fileRes.arrayBuffer();
+    res.send(Buffer.from(buffer));
+  } catch (err) {
+    console.error('[proxy-download]', err.message);
+    res.status(500).send('Proxy failed');
   }
 });
 

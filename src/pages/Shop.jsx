@@ -14,6 +14,8 @@ const Shop = () => {
   const [restoreEmail, setRestoreEmail] = useState('');
   const [newsletterEmail, setNewsletterEmail] = useState('');
   const [newsletterLoading, setNewsletterLoading] = useState(false);
+  const [restoreError, setRestoreError] = useState('');
+  const [restoreLoading, setRestoreLoading] = useState(false);
 
   // ── Fetch products from Supabase ──
   useEffect(() => {
@@ -76,9 +78,31 @@ const Shop = () => {
     }
   };
 
-  const handleRestorePurchase = (e) => {
+  const handleRestorePurchase = async (e) => {
     e.preventDefault();
-    if (restoreEmail) navigate('/download', { state: { email: restoreEmail } });
+    setRestoreError('');
+    if (!restoreEmail) return;
+
+    setRestoreLoading(true);
+    try {
+      const backendUrl = import.meta.env.VITE_BACKEND_URL;
+      const res = await fetch(`${backendUrl}/api/payments/get-files`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: restoreEmail }),
+      });
+      const data = await res.json();
+
+      if (!data.success || !data.orders || data.orders.length === 0) {
+        setRestoreError('No purchase is made under that email. If wrong, please contact support.');
+      } else {
+        navigate('/download', { state: { email: restoreEmail } });
+      }
+    } catch (err) {
+      setRestoreError('Could not verify email. Please try again.');
+    } finally {
+      setRestoreLoading(false);
+    }
   };
 
   return (
@@ -166,18 +190,32 @@ const Shop = () => {
               <h3 className="jakarta text-3xl font-black uppercase mb-2">Lost your files?</h3>
               <p className="text-white/60 text-sm">Enter the email you used to purchase the digital album to restore your download link.</p>
             </div>
-            <form onSubmit={handleRestorePurchase} className="w-full md:w-1/2 flex">
-              <input
-                type="email"
-                placeholder="ENTER YOUR EMAIL"
-                required
-                value={restoreEmail}
-                onChange={(e) => setRestoreEmail(e.target.value)}
-                className="w-full bg-black border border-white/20 px-4 py-3 text-white placeholder-white/30 focus:outline-none focus:border-[#d24700] uppercase text-xs tracking-widest"
-              />
-              <button type="submit" className="bg-[#d24700] px-6 py-3 hover:bg-white hover:text-black transition-colors flex items-center justify-center">
-                <ArrowRight className="w-5 h-5" />
-              </button>
+            <form onSubmit={handleRestorePurchase} className="w-full md:w-1/2 flex flex-col gap-2">
+              <div className="flex w-full">
+                <input
+                  type="email"
+                  placeholder="ENTER YOUR EMAIL"
+                  required
+                  value={restoreEmail}
+                  onChange={(e) => {
+                    setRestoreEmail(e.target.value);
+                    setRestoreError('');
+                  }}
+                  className="w-full bg-black border border-white/20 px-4 py-3 text-white placeholder-white/30 focus:outline-none focus:border-[#d24700] uppercase text-xs tracking-widest"
+                />
+                <button 
+                  type="submit" 
+                  disabled={restoreLoading}
+                  className="bg-[#d24700] px-6 py-3 hover:bg-white hover:text-black transition-colors flex items-center justify-center disabled:opacity-50"
+                >
+                  {restoreLoading ? <span className="text-xs font-bold">...</span> : <ArrowRight className="w-5 h-5" />}
+                </button>
+              </div>
+              {restoreError && (
+                <p className="text-[#d24700] text-[10px] font-bold uppercase tracking-widest mt-1">
+                  {restoreError}
+                </p>
+              )}
             </form>
           </div>
         </div>

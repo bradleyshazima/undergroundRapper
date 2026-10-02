@@ -33,7 +33,13 @@ const CheckoutModal = ({ product, onClose }) => {
     setStatusText('Opening Paystack payment portal...');
 
     const paystackKey = import.meta.env.VITE_PAYSTACK_PUBLIC_KEY;
-    const backendUrl = import.meta.env.VITE_BACKEND_URL || 'http://192.168.88.253:5000';
+    const backendUrl = import.meta.env.VITE_BACKEND_URL;
+    
+    if (!backendUrl) {
+      setErrorMessage('Backend URL not configured. Contact support.');
+      setIsProcessing(false);
+      return;
+    }
 
     if (!paystackKey) {
       setErrorMessage('Paystack Public Key is missing. Check your .env file and restart Vite.');

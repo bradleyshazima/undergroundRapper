@@ -8,7 +8,8 @@ const Download = () => {
   const location = useLocation();
   const { email, product } = location.state || {};
 
-  const backendUrl = import.meta.env.VITE_BACKEND_URL || 'http://192.168.88.253:5000';
+  const backendUrl = import.meta.env.VITE_BACKEND_URL;
+  if (!backendUrl) console.error('VITE_BACKEND_URL is not set — check your deployment env vars');
   const [orders, setOrders] = useState([]);
   const [filesLoading, setFilesLoading] = useState(true);
   const [fetchError, setFetchError] = useState(null);
@@ -57,7 +58,12 @@ const Download = () => {
         setDownloadErrors(prev => ({ ...prev, [fileKey]: data.message }));
         return;
       }
-      window.open(data.url, '_blank');
+      const a = document.createElement('a');
+      a.href = data.url;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+
       // Reflect new count in UI immediately
       setOrders(prev => prev.map(order => {
         if (order.order_id !== orderId) return order;
@@ -149,7 +155,7 @@ return (
                       className="flex items-center gap-2 bg-[#d24700] text-white px-5 py-3 font-bold uppercase tracking-widest text-xs hover:bg-white hover:text-black transition-colors disabled:opacity-40 disabled:cursor-not-allowed flex-shrink-0"
                     >
                       {downloadingKey === order.single.file_key ? <Loader2 className="w-4 h-4 animate-spin" /> : <DownloadIcon className="w-4 h-4" />}
-                      {order.single.downloads_remaining === 0 ? 'Limit Reached' : `Download (${order.single.downloads_remaining} left)`}
+                      {order.single.downloads_remaining === 0 ? 'Download Limit Reached' : `Download (${order.single.downloads_remaining} left)`}
                     </button>
                   )}
                 </div>
@@ -177,7 +183,7 @@ return (
                                   {file.name}
                                 </span>
                                 {file.downloads_remaining === 0 && (
-                                  <span className="text-[10px] text-red-400/70 uppercase tracking-widest">Limit reached</span>
+                                  <span className="text-[10px] text-red-400/70 uppercase tracking-widest">Download Limit reached</span>
                                 )}
                                 {downloadErrors[file.file_key] && (
                                   <span className="text-[10px] text-red-400 block">{downloadErrors[file.file_key]}</span>
